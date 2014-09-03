@@ -1,0 +1,28 @@
+<div class="spam">
+    <h1>REPL Host Page</h1>
+    <div>
+       <h2>It takes two to tango.</h2>
+       <p>
+              This page must run ClojureScript code to allow for a REPL socket connection.
+              That script is loaded below. This makes this page a <em>potential</em>
+              listener for ClojureScript REPL connections.
+       </p>
+       <p>
+             Then this page must be accessible via a true web server. That happens
+             via <strong>lein ring server</strong>, or your server solution of choice.
+             You'll need to have this page actually loaded into browser, not just
+             accessible in theory. 
+       </p>
+       <p>
+             Finally, the separate terminal window must be launched. That's where
+             <strong>austin</strong> comes in. 
+       </p>
+    </div>
+    <hr>
+    <div>
+        <button id="agentBtn">Check User Agent</button>
+    </div>
+    <script src="/js/angular.js"></script>
+    <script src="/js/cljs_seed.js"></script>
+    <script>cljs_seed.repl_host.app.initialize()</script>
+</div>

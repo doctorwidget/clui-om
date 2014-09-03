@@ -1,0 +1,105 @@
+****************
+Introduction
+****************
+
+The documentation for this project will be focusing primarily on issues related
+to ClojureScript, Om, and client-side UIs.
+
+
+Startup
+==========
+
+Note that this project was started using the standard ``compojure`` template,
+as described on the main `compojure project page`_.
+
+.. _`compojure project page`: https://github.com/weavejester/compojure/wiki/Getting-Started
+
+.. code-block:: bash
+
+    $: lein new compojure <your project name>
+
+
+Documentation
+===================
+
+This documentation is all done via `Sphinx`_. In the past I've toyed with the
+`lein-sphinx`_ plugin, but I've decided it's more straightforward to just use the
+unadorned Python-based sphinx commands. This means I end up using a single
+dedicated terminal window with an activated Python virtual environment for
+occasionally running ``make html``. That doesn't bother me, because the task is
+both distinct enough and important enough to merit its own little window off to
+the side.
+
+
+.. _`Sphinx`: http://sphinx-doc.org/
+
+.. _`lein-sphinx`: https://github.com/SnootyMonkey/lein-sphinx
+
+I use `virtualenvwrapper`_ to manage my virtual environments.  This project
+is set up using my ``py278`` environment, which has access to a Sphinx
+installation. I created a ``doc`` folder at the top tier of the project, moved
+into it, and ran ``sphinx-quickstart``, which creates all of the various
+folders, makefiles, and configuration files for you. 
+
+.. _`virtualenvwrapper`: http://virtualenvwrapper.readthedocs.org/en/latest/
+
+The only special modifications I use from the default setup are to add one
+option to the main ``Makefile``:
+
+.. code-block:: bash
+
+    # inside Makefile
+    SPHINXOPTS = -a 
+
+Which makes Sphinx rebuild *all* of the documentation every time, even for
+unchanged files. That adds a tiny time delay, but means the various crosslinks
+never get out of whack, which is, IMHO, a very worthwhile trade. 
+
+I also like the ``agogo`` theme, so I add this to ``conf.py``:
+
+.. code-block:: python
+
+   # inside conf.py
+   html_theme = "agogo"
+
+Finally, to build the docs, you simply run ``make html`` from inside the
+``doc/`` folder. It should go without saying that you must have an activated
+Python virtual environment which has access to ``Sphinx``!
+
+.. code-block:: bash
+
+    (py238)$: make html
+    #... output elided
+
+    Build finished. The HTML pages are in _build/html.
+
+
+
+Git
+==========
+
+TODO: git stuff
+
+
+
+Ring
+===========
+
+Get basic ring server running. Some changes to ``project.clj``. Use ``enlive``,
+not ``hiccup``! Do an index page view and an Om page view. 
+
+
+
+ClojureScript
+================
+
+Super-simple vanilla ClojureScript on the home page. Some changes to ``project.clj``.
+Make the index page view run some super simple ClojureScript code.
+
+
+Om
+============
+
+Basic Om discussion. New ClojureScript namespace. Simple Om demonstrations.
+
+

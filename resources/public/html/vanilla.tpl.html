@@ -1,0 +1,18 @@
+<div class="spam">
+    <p>This is the vanilla page.</p>
+    <div>
+        <form id="spamForm" onsubmit="clui_om.vanilla.echo();">
+            <label for="spamInput"></label>
+            <input id="spamInput" name="spamInput" type="text" placeholder="Type something here">
+            <button id="spamBtn" value="foo">Spam it!</button>
+        </form>
+        <hr>
+        <p id="spamOutput">Nothing output yet!</p>
+    </div>
+    <hr>
+    <div>
+        <button id="agentBtn">Check User Agent</button>
+    </div>
+    <script src="/js/clui_om.js"></script>
+    <script>clui_om.vanilla.initialize()</script>
+</div>
