@@ -11,3 +11,7 @@ pom.xml.asc
 .lein*
 *.DS_Store
 */_build/*
+out/
+.repl/*
+resources/public/js/*
+resources/test/unit/*

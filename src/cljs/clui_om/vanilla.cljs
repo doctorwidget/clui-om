@@ -1,5 +1,6 @@
 (ns clui-om.vanilla
-  (:require [goog.dom :as gdom]
+  (:require [clojure.browser.repl :as repl]
+            [goog.dom :as gdom]
             [goog.dom.classes :as gcls]
             [goog.dom.forms :as gforms]
             [goog.events :as geve]
@@ -18,17 +19,26 @@
 
 (defn echo
   "Spam the contents of the input field into the output field."
-  [evt]
-  (let [stuff (gforms/getFormDataMap $form)
-        input (.get stuff "spamInput")]
-    (.preventDefault evt)
-    (.log js/console input)
-    (.log js/console (str "echoing..." input input input))
-    (gdom/setTextContent $output (str input input input))))
+  ([]
+     (let [stuff (gforms/getFormDataMap $form)
+           input (.get stuff "spamInput")]
+       (.log js/console input)
+       (.log js/console (str "echoing..." input input input))
+       (gdom/setTextContent $output (str input input input))))
+  ([evt]
+     (.preventDefault evt)
+     (echo)))
+
+(defn yo
+  "Put an arbitrary argument into the output field.
+   Suitable for calling via the bREPL"
+  [msg]
+  (gdom/setTextContent $output msg))
 
 (defn ^:export initialize
   "Initialize the main vanilla page"
   []
+  (repl/connect "http://localhost:9000/repl")
   (.log js/console "initializing vanilla...")
   (gcls/add $output "vanilla-border")
   (gdom/setTextContent $output (str "Dynamically created by the Google Closure at: " (js/Date.)))
