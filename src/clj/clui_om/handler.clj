@@ -7,6 +7,7 @@
 (defroutes app-routes
   (GET "/" [] (views/home-page))
   (GET "/vanilla" [] (views/vanilla-page))
+  (GET "/react" [] (views/react-page))
   (route/resources "/")
   (route/not-found "Not Found"))
 
