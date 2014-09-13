@@ -78,28 +78,90 @@ Python virtual environment which has access to ``Sphinx``!
 Git
 ==========
 
-TODO: git stuff
+The project uses Git, of course. But currently there is no remote branch on
+Github. 
 
 
 
 Ring
 ===========
 
-Get basic ring server running. Some changes to ``project.clj``. Use ``enlive``,
-not ``hiccup``! Do an index page view and an Om page view. 
+The project uses a basic ``Ring`` server. You can inspect the Ring-related
+plugins and dependencies in ``project.clj``. The main server class is
+``clui-om.handler/app``, and you can inspect the source code for it in
+``src/clj/clui_om/handler.clj``.
+
+Server-side page layout is handled via `Enlive`_. You can inspect those files
+inside ``src/clj/clui_om/views/core.clj``. There isn't much server-side logic
+going on at all: the emphasis of this project is on client-side stuff.
+
+
+.. _`Enlive`: https://github.com/cgrand/enlive
 
 
 
 ClojureScript
 ================
 
-Super-simple vanilla ClojureScript on the home page. Some changes to ``project.clj``.
-Make the index page view run some super simple ClojureScript code.
+There is a very simple example of *vanilla* ClojureScript up and running at
+the URL ``/vanilla``. This is just a brief reminder and demonstration of doing
+extremely remedial operations in ClojureScript. See the source code for this
+page at ``src/cljs/clui_om/vanilla.cljs``. 
+
+Note that this namespace loads ``clojure.browser.repl`` and subsequently calls
+``(connect)``, which means it is a valid target for a ClojureScript browser
+REPL. Setting up such a ClojureScript browser REPL is a surprisingly involved
+process compared to a regular Clojure REPL. The two main hurdles are 
+
+#. the need for an actual server-hosted HTML page
+#. the need for that page to make a remote connection to the ClojureScript 
+   bREPL terminal window. 
+
+Fortunately, this project is already set up to handle both of those things.
 
 
-Om
-============
+Using the bREPL
+-------------------
 
-Basic Om discussion. New ClojureScript namespace. Simple Om demonstrations.
+To use the bREPL, you first start the Ring server in its own terminal window
+somewhere, via the usual ``lein ring server``. Then you visit the vanilla page
+mentioned above in a browser. Note that ``vanilla.cljs`` doesn't just load
+``clojure.browser.repl``: it also makes a call to ``(connect)`` 
+inside the main ``(initialize)`` function for the page. 
+
+Finally, you launch a regular Clojure REPL:
+
+.. code-block:: bash
+
+    $: lein repl
+    ; nREPL server started on port ...
+    ; ...
+    ; user=>
+
+And then from inside the Clojure REPL, you launch your ClojureScript
+bREPL. 
+
+.. code-block:: clojure
+
+    (require '[cljs.repl :as repl])
+    ;nil
+ 
+    (require '[cljs.repl.browser :as browser])
+    ; nil
+
+    (def env (browser/repl-env)) ;; create a new environment
+    ;#'cljs-seed.core/env
+
+    (repl/repl env)
+    ;To quit, type: :cljs/quit
+    ;ClojureScript:cljs.user> 
+
+    (js/alert "spam")
+    ; the browser window should get a popup, yay?
+
+Remember that you must be working in a domain where the ``lein`` dependencies
+know about both Clojure and ClojureScript for this to work! Also note that this
+is a fairly verbose set of four commands, which could be simplified if you used
+a library like ``Austin``. 
 
 

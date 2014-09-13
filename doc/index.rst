@@ -13,9 +13,12 @@ Contents:
    :glob:
 
    intro
+   react
    om
    om-bootstrap
+   om-kioo
    page-alpha
+   testing
    todo
 
 

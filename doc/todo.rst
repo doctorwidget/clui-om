@@ -6,10 +6,10 @@ Todo
 
 *DONE* set up the documentation folder, Sphinx file, etc
 
-create initial git repository
+*DONE* create initial git repository
 
-get first page up and running
+*DONE* get first page up and running
 
-get ClojureScript REPL access to the first page
+*DONE* get ClojureScript REPL access to the first page
 
 tackle the testing question: what is the testing story here?
