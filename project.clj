@@ -5,7 +5,9 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2322"]
                  [compojure "1.1.8"]
-                 [enlive "1.1.5"]]
+                 [enlive "1.1.5"]
+                 [om "0.7.3"]
+                 [markdown-clj "0.9.54"]]
   
   :plugins [[lein-ring "0.8.11"]
             [lein-cljsbuild "1.0.3"]]
@@ -25,12 +27,16 @@
                  :id "dev"
                  :compiler {:pretty-print true
                             :output-to "resources/public/js/clui_om.js"
-                            :optimizations :simple}}
+                            :optimizations :simple
+                            :preamble ["lib/react.min.js"]
+                            :externs ["lib/react.min.js"]
+                            }}
                 {:source-paths ["src/cljs"]
                  :id "prod"
                  :compiler {:output-to "resources/public/js/clui_om.min.js"
                             :optimizations :advanced
-                            :externs []}}
+                            :preamble ["lib/react.min.js"]
+                            :externs ["lib/react.min.js"]}}
                 {:source-paths ["src/cljs" "test/cljs"]
                  :id "test"
                  :compiler {:output-to "resources/test/unit/clui_om_test.js"

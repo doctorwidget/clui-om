@@ -19,6 +19,7 @@
 (h/defsnippet home-body "public/html/home.tpl.html" [:div.spam] [])
 (h/defsnippet vanilla-body "public/html/vanilla.tpl.html" [:div.spam] [])
 (h/defsnippet react-body "public/html/react.tpl.html" [:div.spam] [])
+(h/defsnippet react-tut-om-body "public/html/react-om-tut.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -33,7 +34,12 @@
               :heading "Sanity Test For Raw ClojureScript"
               :content (vanilla-body)}))
 
-(defn react-page []
+(defn react-tut-page []
   (base-page {:title "Vanilla React"
               :heading "Sanity Tests for Raw React"
               :content (react-body)}))
+
+(defn react-tut-om-page []
+  (base-page {:title "React + Om = ???"
+              :heading "The React Tutorial. Now With More Om."
+              :content (react-tut-om-body)}))
