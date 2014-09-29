@@ -4,6 +4,8 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2322"]
+                 [cheshire "5.3.1"]
+                 [cljs-http "0.1.16"]
                  [compojure "1.1.8"]
                  [enlive "1.1.5"]
                  [om "0.7.3"]
@@ -28,8 +30,8 @@
                  :compiler {:pretty-print true
                             :output-to "resources/public/js/clui_om.js"
                             :optimizations :simple
-                            :preamble ["lib/react.min.js"]
-                            :externs ["lib/react.min.js"]
+                            :preamble ["lib/react.js"]
+                            :externs ["lib/react.js"]
                             }}
                 {:source-paths ["src/cljs"]
                  :id "prod"

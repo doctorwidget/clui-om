@@ -1,5 +1,7 @@
 (ns clui-om.utils
-  (:require [cljs.reader :as reader])
+  (:require [cljs.reader :as reader]
+            [clojure.string :as s]
+            [om.core :as om :include-macros true])
   (:import [goog.ui IdGenerator]))
 
 (defn guid
@@ -17,3 +19,19 @@
    called :id, containing a guid."
   [m]
   (assoc m :id (guid)))
+
+(defn value-from-node
+  "Get the text value from a node, trimmed of whitespace.
+   Returns a 2-tuple of text and the node itself (in case
+   you want to alter the node based on its contents)"
+  [owner field]
+  (let [n (om/get-node owner field)
+        v (-> n .-value s/trim)]
+    (when-not (empty? v)
+      [v n])))
+
+(defn clear-nodes!
+  "Sets all values in a sequence of nodes to the empty string."
+  [& nodes]
+  (doseq [n nodes]
+    (set! (.-value n) "")))

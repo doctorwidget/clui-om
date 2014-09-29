@@ -5,10 +5,20 @@
        Nothing has been added to the original, except for the
        core <strong>Om</strong> library itself. However, the original tutorial
        used two vanilla JavaScript libraries that have been changed to their
-       ClojureScript equivalents: <em>Showdown</em> to <em>markdown-clj</em>
-       and <em>jQuery</em> to <em>cljs-http</em>
-      Also see <strong>jalehman's</strong>
-      <a href="https://github.com/jalehman/react-tutorial-om">react-tutorial-om</a>. 
+       ClojureScript equivalents: <strong>markdown-clj</strong> instead of
+      <em>Showdown</em> and <strong>cljs-http</strong> instead of <em>jQuery</em>.
+     </p>
+     <p>
+      I used <strong>jalehman's</strong>
+      <a href="https://github.com/jalehman/react-tutorial-om">react-tutorial-om</a>,
+      as the basis for this page, but it contains some significant anomalies and
+      did not work out of the box originally. For example, there is some
+      obsolete syntax from very early <strong>om</strong> releases, some
+      confusion over when to use <em>om/update!</em>
+      versus <em>om/transact!</em>, and some unecessary imports (i.e.
+      the <em>secretary</em> library). Cleaning up all of those anomalies by
+      poring over the error messages and the <em>Om</em> source code was a
+      worthwhile learning experience.
     </p>
 
     <p>
@@ -50,7 +60,11 @@
       case, <code>react</code>) inside the <code>src</code> directory somewhere, 
       as opposed to only having it inside the <code>resources/public</code>
       directory. You probably don't want external libraries to be in your version
-      control, but you can easily micromanage that inside your <code>.gitignore</code>.
+      control, but you can easily micromanage that inside
+      your <code>.gitignore</code>. Finally, you will want to use (for example)
+      <em>react.js</em> in your <strong>:cljsbuild</strong> <em>dev</em>
+      profile, and save <em>react.min.js</em> for your <em>prod</em> profile,
+      so that your dev environment gets sensible error messages. 
     </p>
 
 
