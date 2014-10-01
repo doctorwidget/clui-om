@@ -8,10 +8,10 @@
             [markdown.core :as md]))
 
 ;;;; App State and other essentials
-(def APP-ROOT (.getElementById js/document "app-main-div"))
-
 (def app-state
   (atom {:comments []}))
+
+(def APP-ROOT (.getElementById js/document "app-main-div"))
 
 
 ;;;; Connectivity
@@ -136,11 +136,11 @@
                          {:opts {:poll-interval 10000
                                  :url "/react-om-tut/comments"}})))))
 
-(defn ^:export initialize
-  "Initialize the main vanilla page"
+(defn ^:export main
+  "Initialize the react-om-tut page"
   []
   (let [uid (u/guid)
-        basemsg "initializing react-om-tut javascript with guid:  <"
+        basemsg "main():: initializing react-om-tut javascript with guid:  <"
         msg (apply str basemsg uid ">")]
     (.log js/console msg)
     ;; Note that the original release of Om had the third argument as THE 
