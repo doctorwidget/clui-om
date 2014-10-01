@@ -15,12 +15,13 @@ Contents:
    intro
    react
    om
-   om-bootstrap
+   react-om
    om-kioo
+   om-bootstrap
    page-alpha
    testing
+   trivia
    todo
-
 
 Indices and tables
 ==================

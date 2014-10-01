@@ -120,8 +120,8 @@ process compared to a regular Clojure REPL. The two main hurdles are
 Fortunately, this project is already set up to handle both of those things.
 
 
-Using the bREPL
--------------------
+Using the bREPL with the vanilla page
+----------------------------------------
 
 To use the bREPL, you first start the Ring server in its own terminal window
 somewhere, via the usual ``lein ring server``. Then you visit the vanilla page
@@ -164,4 +164,17 @@ know about both Clojure and ClojureScript for this to work! Also note that this
 is a fairly verbose set of four commands, which could be simplified if you used
 a library like ``Austin``. 
 
+
+Using the bREPL with other pages
+----------------------------------
+
+Any other page that you want to have bREPL access to will need to have the same
+code that ``vanilla.cljs`` does:
+
+#. Access to ``clojure.browser.repl`` inside the namespace.
+#. A call to ``(connect)`` somewhere in your ``(initialize)`` function.
+#. A copy of that page actively running in a window somewhere.
+
+Once you have all of that, you can start the Clojure REPL, followed by the
+ClojureScript REPL, as described above. 
 
