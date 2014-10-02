@@ -23,15 +23,19 @@
     [cursor {:keys [url]}]
     (go (let [{:keys [status body headers] :as all} (<! (http/get url))
               msg (:message body)
-              comments (:comments body)
-              numbered-comments (mapv u/with-id comments)]
-          (.log js/console (str "Message: " msg))
-          (.log js/console (str "Status: " status))
-          (.log js/console (str "Body: " body))
-          (.log js/console (str "Headers: " headers))
-          (.log js/console (str "Comments: " numbered-comments))
-          (om/transact! cursor #(assoc % :comments numbered-comments))
-          (.log js/console (str "App state: " @app-state)))))
+              cts (:comments body)
+              numbered-comments (mapv u/with-id cts)]
+          ;; OPTIONAL: this if block is very optional logging
+          (if (= (count (@app-state :comments)) (count numbered-comments))
+            (.log js/console (str "No change in comments."))
+            (do
+              (.log js/console (str "Message: " msg))
+              (.log js/console (str "Status: " status))
+              (.log js/console (str "Body: " body))
+              (.log js/console (str "Headers: " headers))
+              (.log js/console (str "Comments: " numbered-comments))))
+          ;; REQUIRED:  the actual update to the application state
+          (om/transact! cursor #(assoc % :comments numbered-comments)))))
 
 (defn save-comment!
   "Submit a new comment from the client to the server."

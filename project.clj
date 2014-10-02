@@ -29,6 +29,8 @@
                  :id "dev"
                  :compiler {:pretty-print true
                             :output-to "resources/public/js/clui_om.js"
+                            :source-map "resources/public/js/clui_om.js.map"
+                            :output-dir "resources/public/js/out"
                             :optimizations :simple
                             :preamble ["lib/react.js"]
                             :externs ["lib/react.js"]
