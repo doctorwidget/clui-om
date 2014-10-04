@@ -10,6 +10,7 @@
                  [enlive "1.1.5"]
                  [kioo "0.4.0"]
                  [om "0.7.3"]
+                 [racehub/om-bootstrap "0.3.0"]
                  [markdown-clj "0.9.54"]]
   
   :plugins [[lein-ring "0.8.11"]

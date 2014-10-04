@@ -57,7 +57,7 @@
   "Event handler for user clicks on the comment form button."
   [e cursor owner opts]
   (let [[author author-node] (u/value-from-node owner "author")
-        [text text-node]     (u/value-from-node owner "text")]
+       [text text-node]     (u/value-from-node owner "text")]
     (when (and author text)
       (save-comment! {:author author :text text} cursor opts)
       (u/clear-nodes! author-node text-node))

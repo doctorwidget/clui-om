@@ -13,6 +13,7 @@
   (GET "/react-om-tut/comments" [] (rom/all-comments))
   (POST "/react-om-tut/comments" req (rom/save-comment! req))
   (GET "/kioo-om-tut" [] (views/kioo-om-tut-page))
+  (GET "/bootstrap-demo" [] (views/bootstrap-demo-page))
   (route/resources "/")
   (route/not-found "Not Found"))
 

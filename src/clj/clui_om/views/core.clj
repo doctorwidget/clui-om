@@ -9,6 +9,14 @@
   [:h1] (h/content (:heading context))
   [:#page-contents] (h/content (:content context)))
 
+;; a base template that includes the boostrap stylesheets
+(h/deftemplate bootstrap-page
+  "public/html/bootstrap.html"
+  [context]
+  [:title] (h/content (:title context))
+  [:h1] (h/content (:heading context))
+  [:#page-contents] (h/content (:content context)))
+
 ;; snippets should resolve to a blob of HTML, but not necessarily
 ;; a complete page! Even if you target a fragment document with
 ;; the intent of returning the whole fragment, you still have to
@@ -21,6 +29,7 @@
 (h/defsnippet react-body "public/html/react.tpl.html" [:div.spam] [])
 (h/defsnippet react-tut-om-body "public/html/react-om-tut.tpl.html" [:div.spam] [])
 (h/defsnippet kioo-om-tut-body "public/html/kioo-om-tut.tpl.html" [:div.spam] [])
+(h/defsnippet bootstrap-demo-body "public/html/bootstrap-demo.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -49,4 +58,10 @@
   (base-page {:title "Kioo"
               :heading "Enlive Style Templating For React"
               :content (kioo-om-tut-body)}))
+
+(defn bootstrap-demo-page []
+  (bootstrap-page {:title "Bootstrap"
+              :heading "Bootstrap UI Components In Om"
+              :content (bootstrap-demo-body)}))
+
 
