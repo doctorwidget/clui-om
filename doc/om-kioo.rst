@@ -68,15 +68,96 @@ family, and prefer to use them when I can.
 Kioo Weaknesses
 ===================
 
-Because ``Kioo`` is a *general-purpose* component solution for ``React``, not
-``Om``, it does not take advantage of some powerful ``Om`` features. For
-example, it's not clear how you would integrate the ``React`` lifecycle
-functions into components defined in ``Kioo``, but this is one of the easiest
-things to do in pure ``Om``. In addition, there is no obvious way to access the
-``owner`` property, or to manipulate local state. 
+The only real weakness I can see to using ``Kioo`` is that it adds an additional
+layer of dependency, and potentially makes it much harder to debug problems. The
+official documentation recommends `this blog post`_ for tips and tricks when it
+comes to debugging. I have mixed feelings about the post: it's good to see that
+there's someone thinking about these issues, but the whole post only seems to
+confirm that debugging ``Kioo`` problems can be a significant hassle. 
 
-Because of this, it seems like ``Kioo`` is best suited for very small ``Om``
-applications that emphasize read-only displays. More ambitious,
-highly-interactive applications might be better off sticking with pure ``Om``. I
-say this even though I have no great love for the ``Hiccup`` style of HTML
-generation provided by ``om.dom``. 
+.. _`this blog post`: http://theholyjava.wordpress.com/2014/04/08/kioo-how-to-troubleshoot-template-processing/
+
+.. note::
+  
+    Also note that Kioo does not support *ordered* transformations. All snippets
+    and templates are created at macro-time, and the order of the
+    transformations at runtime cannot be guaranteed. 
+
+
+Code Examples
+==================
+
+The Simplest Format
+---------------------
+
+The simplest way to use ``ioo`` is to wrap ``defsnippet`` or ``deftemplate``
+calls within calls to ``om/component``. This results in simple components that
+only implement the ``render`` phase, leaving all other behaviors at their
+defaults:
+
+.. code-block::  clojure
+
+      (def app-state (atom {:stuff "forty-two" :thing "parrot"}))
+ 
+      (def THING-ROOT (.getElementById js/document "my-thing-div"))
+
+      ; snippets like this do not get placed directly
+      (defsnippet my-snippet "public/html/frags/my-frag.tpl.html" 
+         [_]  ; selector
+         [thing stuff]
+         ; transformations omitted)
+
+      ; instead they are wrapped in a call to om/component
+      (defn my-wrapped-kioo
+         [{:keys [thing stuff]}]
+         (om/component (my-snippet thing stuff)))
+
+      ; and then, as always in Om, there must be a call to om/root
+      (om/root my-wrapped-kioo app-state {:target THING-ROOT}))
+
+   
+
+From everywhere outside of ``(my-wrapped-kioo)``, this is a 100% standard Om
+component. Inside of that block, we can see the nitty-gritty details of
+``(defsnippet)``, but at the higher levels, ``Om`` is completely agnostic about
+the rendering details.
+
+
+A More Complex Format
+-------------------------
+
+If that were the only way to use ``Kioo``, then you wouldn't be able to use the
+full power of ``Om``, and the library would be of limited use at best. But in
+fact, you can freely use your ``(defsnippet)`` and ``(deftemplate)`` code inside
+the lifecycle protocol sections of a larger ``Om`` component. 
+
+.. code-block:: clojure
+
+    (defn my-app [app owner]
+          (reify
+              om/IWillMount
+              (will-mount [_]
+                 (let [blah blerg]
+                    nil))
+
+              om/IRender
+              (render [_]
+                (my-snippet (:stuff app) (:thing app)))))
+
+Note that when a snippet is placed inside a ``reify`` block like this, you don't
+need to wrap it with ``om/component``: simply placing it as the main body of the
+``render`` implementation does the trick. 
+
+kioo/component
+-------------------
+
+Finally, ``kioo/component`` is a macro that lets you skip using ``defsnippet`` and
+``deftemplate`` entirely, should you prefer. As always, this macro must be
+imported explicitly via ``:require-macros``. See the official `Kioo MVC
+tutorial`_ for extensive examples using this macro. 
+
+.. _`Kioo MVC tutorial`: https://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs
+
+  
+
+

@@ -70,10 +70,35 @@
 
 (defn other-init [data] (om/component (my-greeter data)))
 
+;; React/Kioo Root #3, this time using the Om lifecycle system
+;; and a component with local state.
+(def gamma-state (atom {:default "waiting"}))
+
+(def GAMMA-ROOT (.getElementById js/document "kioo-gamma-div"))
+
+(defn gamma-handler [e owner]
+  (.log js/console "gamma-handler called")
+  (om/set-state! owner :toggled (not (om/get-state owner :toggled))))
+
+(defsnippet gamma-snippet "public/html/frags/kioo-gamma-frag.tpl.html" [:#gamma]
+  [toggled owner]
+  {[:#output] (content (if toggled "ATHENS" "SPARTA"))
+   [:#toggle] (listen :onClick #(gamma-handler % owner))})
+
+(defn gamma-component [app owner opts]
+   (reify
+        om/IInitState
+        (init-state [_]
+           {:toggled false})
+        om/IRenderState
+        (render-state [_ {:keys [toggled]}]
+          (gamma-snippet toggled owner))))
+
 ;; Finally, the public (main) function, for use on the HTML host page
 (defn ^:export main
   "Initialize the kioo-om-tut page"
   []
   (.log js/console "Hello from kioo-om-tut!")
   (om/root init app-state {:target APP-ROOT})
-  (om/root other-init other-state {:target OTHER-ROOT}))
+  (om/root other-init other-state {:target OTHER-ROOT})
+  (om/root gamma-component gamma-state {:target GAMMA-ROOT}))
