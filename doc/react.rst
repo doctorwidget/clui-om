@@ -239,14 +239,12 @@ inside your component code via the core ``setState()`` method.
 
 .. note::
 
-    Because this state object is *mutable*, you won't usually use it directly in
-    your ``Om`` code. *Replacing multiple mutable local state objects in favor
-    of a single immutable global state object is THE fundamental paradigm shift
-    when you move from React to Om.*
+    Om provides a wrapped version of ``state`` for any component, should you
+    choose to use it. The Om version is an immutable atom under the hood, of
+    course.
 
-
-However, it's still important to know that naked React code uses ``this.state``
-extensively, so you aren't confused when you peruse naked React code.
+It's important to know that naked React code often makes extensive use of
+``this.state``. Don't be confused by this when you peruse naked React code!
 
 
 Event Handling
@@ -290,9 +288,9 @@ The complete list of supported events can be found `here`_.
 
 .. _`here`: http://facebook.github.io/react/docs/events.html
 
-Note that in general, inside ``Om`` code, these events are always referred to
-via their Clojure keyword equivalent names, e.g. ``:on-click`` instead of
-``onClick``. 
+Note that in general, inside ``Om`` code, these events are referred to
+via Clojure keyword equivalent names, e.g. ``:onClick`` instead of
+``onClick``. Note that they have been keywordized but *not* camel-cased!
 
 
 

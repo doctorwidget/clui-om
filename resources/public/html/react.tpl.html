@@ -14,6 +14,15 @@
       <a href="http://facebook.github.io/react/docs/tutorial.html">React tutorial</a>
       for a step-by-step walkthrough of this code. 
     </p>
+    <p>
+      Note that this tutorial does <em>not</em> implement any kind of
+      server-side storage whatsoever. A static JSON file is used as a
+      <em>very crude</em> mock database, and it is reloaded every few seconds.
+      Thus, posted comments appear right away (because of the <em>optimisitic 
+      update</em> code in the tutorial), but they vanish as soon as the JSON
+      file is reloaded. This would be easy to fix, but I haven't bothered, my
+      goal is to move on to <code>Om</code> instead of vanilla React ASAP.
+    </p>
 
     <!-- the primary target for the main react command -->
     <div id='content'></div>

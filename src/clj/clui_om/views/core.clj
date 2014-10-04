@@ -20,6 +20,7 @@
 (h/defsnippet vanilla-body "public/html/vanilla.tpl.html" [:div.spam] [])
 (h/defsnippet react-body "public/html/react.tpl.html" [:div.spam] [])
 (h/defsnippet react-tut-om-body "public/html/react-om-tut.tpl.html" [:div.spam] [])
+(h/defsnippet kioo-om-tut-body "public/html/kioo-om-tut.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -43,3 +44,9 @@
   (base-page {:title "React + Om = ???"
               :heading "The React Tutorial. Now With More Om."
               :content (react-tut-om-body)}))
+
+(defn kioo-om-tut-page []
+  (base-page {:title "Kioo"
+              :heading "Enlive Style Templating For React"
+              :content (kioo-om-tut-body)}))
+

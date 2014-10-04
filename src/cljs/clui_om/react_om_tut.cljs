@@ -13,7 +13,6 @@
 
 (def APP-ROOT (.getElementById js/document "app-main-div"))
 
-
 ;;;; Connectivity
 ;; Functions that handle all of the IO from the client to the server.
 
@@ -40,18 +39,25 @@
 (defn save-comment!
   "Submit a new comment from the client to the server."
   [comment cursor {:keys [url]}]
-  (do (om/transact! cursor
-                  (fn [comments] 
-                    (conj comments (assoc comment :id (u/guid)))))
+  (do (om/transact! cursor :comments  
+                    (fn [original-comments]
+                      (.log js/console (str "Original comments: " original-comments))
+                      (.log js/console (str "New comment: " comment))
+                      (conj original-comments comment)))
+      ;; NOTE correct args to om/transact! are: cursor KORKS function
+      ;; KORKS (aka key-or-keys) lets you drill down into the cursor to get a
+      ;; sub-cursor. If you manually drill down you end up with a plain data
+      ;; structure, not an Om cursor, which means it's immutable, even though
+      ;; you are inside om/transact! USE THE KORKS LUKE
       (go (let [res (<! (http/post url {:json-params comment}))]
-            (prn (:message res))))))
+            (.log js/console (:message res))))
+      (.log js/console (str "Optimistic comments: " (:comments @app-state)))))
 
 (defn handle-submit
   "Event handler for user clicks on the comment form button."
   [e cursor owner opts]
   (let [[author author-node] (u/value-from-node owner "author")
         [text text-node]     (u/value-from-node owner "text")]
-    (.log js/console cursor)
     (when (and author text)
       (save-comment! {:author author :text text} cursor opts)
       (u/clear-nodes! author-node text-node))
@@ -144,7 +150,7 @@
   "Initialize the react-om-tut page"
   []
   (let [uid (u/guid)
-        basemsg "main():: initializing react-om-tut javascript with guid:  <"
+        basemsg "main():: initializing react-om-tut.cljs with initial guid:  <"
         msg (apply str basemsg uid ">")]
     (.log js/console msg)
     ;; Note that the original release of Om had the third argument as THE 

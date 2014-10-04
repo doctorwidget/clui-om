@@ -8,6 +8,7 @@
                  [cljs-http "0.1.16"]
                  [compojure "1.1.8"]
                  [enlive "1.1.5"]
+                 [kioo "0.4.0"]
                  [om "0.7.3"]
                  [markdown-clj "0.9.54"]]
   
@@ -32,14 +33,14 @@
                             :source-map "resources/public/js/clui_om.js.map"
                             :output-dir "resources/public/js/out"
                             :optimizations :simple
-                            :preamble ["lib/react.js"]
+                            ;:preamble ["lib/react.js"]
                             :externs ["lib/react.js"]
                             }}
                 {:source-paths ["src/cljs"]
                  :id "prod"
                  :compiler {:output-to "resources/public/js/clui_om.min.js"
                             :optimizations :advanced
-                            :preamble ["lib/react.min.js"]
+                            ;:preamble ["lib/react.min.js"]
                             :externs ["lib/react.min.js"]}}
                 {:source-paths ["src/cljs" "test/cljs"]
                  :id "test"
