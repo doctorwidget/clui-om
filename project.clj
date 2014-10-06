@@ -35,14 +35,14 @@
                             :output-dir "resources/public/js/out"
                             :optimizations :simple
                             ;:preamble ["lib/react.js"]
-                            :externs ["lib/react.js"]
+                            :externs ["lib/react-externs.js"]
                             }}
                 {:source-paths ["src/cljs"]
                  :id "prod"
                  :compiler {:output-to "resources/public/js/clui_om.min.js"
                             :optimizations :advanced
                             ;:preamble ["lib/react.min.js"]
-                            :externs ["lib/react.min.js"]}}
+                            :externs ["lib/react-externs.js"]}}
                 {:source-paths ["src/cljs" "test/cljs"]
                  :id "test"
                  :compiler {:output-to "resources/test/unit/clui_om_test.js"

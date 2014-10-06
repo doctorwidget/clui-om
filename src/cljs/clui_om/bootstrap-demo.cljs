@@ -35,8 +35,13 @@
                       (b/button {:bs-style "info" :on-click echo} "Info")
                       (b/button {:bs-style "warning" :on-click echo} "Warning")
                       (b/button {:bs-style "danger" :on-click echo} "Danger")
-                      (b/button {:bs-style "link" :on-click echo} "Link")))
-        ))))
+                      (b/button {:bs-style "link" :on-click echo} "Link"))
+                  (b/dropdown {:bs-style "info" :title "More..."}
+                       (b/menu-item {:key 1 :on-click echo} "Action")
+                       (b/menu-item {:key 2 :on-click echo} "Another action")
+                       (b/menu-item {:key 3 :on-click echo} "Something else here")
+                       (b/menu-item {:divider? true})
+                       (b/menu-item {:key 4 :on-click echo} "Separated link")))))))
 
 
 

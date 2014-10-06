@@ -30,6 +30,7 @@
 (h/defsnippet react-tut-om-body "public/html/react-om-tut.tpl.html" [:div.spam] [])
 (h/defsnippet kioo-om-tut-body "public/html/kioo-om-tut.tpl.html" [:div.spam] [])
 (h/defsnippet bootstrap-demo-body "public/html/bootstrap-demo.tpl.html" [:div.spam] [])
+(h/defsnippet page-alpha-body "public/html/page-alpha.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -62,6 +63,11 @@
 (defn bootstrap-demo-page []
   (bootstrap-page {:title "Bootstrap"
               :heading "Bootstrap UI Components In Om"
-              :content (bootstrap-demo-body)}))
+                   :content (bootstrap-demo-body)}))
+
+(defn page-alpha []
+  (bootstrap-page {:title "Page Alpha"
+                   :heading "All Custom, All The Time"
+                   :content (page-alpha-body)}))
 
 
