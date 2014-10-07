@@ -1,6 +1,7 @@
 (ns clui-om.widgets.palettes
-   (:require [om.core :as om :include-macros true]
-             [om.dom :as odom :include-macros true]))
+  (:require [clojure.string :as s]
+            [om.core :as om :include-macros true]
+            [om.dom :as odom :include-macros true]))
 
 (def PROTOGENIE {:slate "#BBCCDD"
                       :navy "#003366"
@@ -32,6 +33,8 @@
              :red "#FF432E"
              :pumpkin "#FFAC00"})
 
+(def DEFAULT-PALETTE PROTOGENIE)
+
 (def palettes {:protogenie PROTOGENIE
                :campfire CAMPFIRE
                :osaki OSAKI
@@ -51,7 +54,8 @@
     om/IRender
     (render [_]
       (apply odom/select #js {:onChange #(parse-choice % callback)}
-             (map #(odom/option (clj->js {:value (name %)}) (name %))  
+             (map #(odom/option (clj->js {:value (name %)})
+                                (s/capitalize (name %)))  
                   (keys palettes))))))  
 
 
