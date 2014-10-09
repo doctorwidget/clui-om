@@ -13,3 +13,34 @@ p#output {
 .gold {
   background-color: gold;
 }
+
+p {
+  padding: 0.5em;
+  margin: 1em;
+}
+
+span.cardDisplay {
+  padding: 0.5em;
+  margin: 0.5em;
+  font-size: 1.2em;
+  border: 4px solid black;
+}
+
+span.cardDisplay.red {
+   color: red;
+   border-color: red;
+}
+
+.deckIcon {
+  margin: 1em;
+  padding: 1em;
+  border: 1px solid gray;
+}
+
+span.glyphicon-align-justify {
+  font-size: 1.4em;
+}
+
+span.deckCensus {
+  font-family: monospace;
+}

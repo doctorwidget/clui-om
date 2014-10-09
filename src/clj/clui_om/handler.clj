@@ -15,6 +15,7 @@
   (GET "/kioo-om-tut" [] (views/kioo-om-tut-page))
   (GET "/bootstrap-demo" [] (views/bootstrap-demo-page))
   (GET "/page-alpha" [] (views/page-alpha))
+  (GET "/page-beta" [] (views/page-beta))
   (route/resources "/")
   (route/not-found "Not Found"))
 

@@ -140,6 +140,11 @@ unminified source files, and use that to show more-helpful debugging messages.
 REPL, REPL, Who's Got The REPL?
 ====================================
 
+The official ClojureScript github project includes a nice `wiki page` documenting
+the ClojureScript REPL. 
+
+.. _`wiki page`: https://github.com/clojure/clojurescript/wiki/The-REPL-and-Evaluation-Environments
+
 
 A Sample Page With A REPL
 ---------------------------------
@@ -220,6 +225,65 @@ code that ``vanilla.cljs`` does:
 
 Once you have all of that, you can start the Clojure REPL, followed by the
 ClojureScript REPL, as described above. 
+
+
+Loading Files
+------------------
+
+You can't use plain old ``(require)`` inside a ClojureScript REPL... that
+function is simply *not implemented*. If you try to do this, you'll get an error
+message that can be hard to interpret, since the idea that something as
+fundamental as ``require`` is not implemented is very counterintuitive. 
+
+Instead, you have three options for loading pre-existing code:
+
+(ns)
+.........
+
+The ``(ns)`` function does exist, along with all of its usual and customary
+keywords. This is probably your best bet for loading code, since it lets you
+give aliases:
+
+.. code-block:: clojure
+     
+    (ns foo.bar 
+       (:require [clui-om.misc.cards :as c]))
+    ;nil
+
+    (def my-card (first (c/fresh-deck)))
+    #clui-om.misc.cards.Card{:rank 1, :suit :hearts}
+
+(load-namespace)
+...................
+
+Alternatively, you can load a specific namespace as a whole. Unfortunately, this
+means you have to use the fully-qualified name for all purposes!
+
+.. code-block:: clojure
+
+   (load-namespace 'clui-om.misc.cards)
+   ;nil
+
+   (def my-card (first (clui-om.misc.cards/fresh-deck)))
+   #clui-om.misc.cards.Card{:rank 8, :suit :diamonds}
+
+
+(load-file)
+................
+
+Finally, you can load an explicit file by name. This seems like the least
+practical method by far: where does the path start? From the directory where you
+loaded the REPL? From the ``project.clj`` directory? From the ``src`` directory
+of the project? Surely it's simpler to just stick with ``(ns)`` and
+``(load-namespace)``. 
+    
+
+Exiting
+----------
+
+To exit the ClojureScript REPL, enter ``:cljs/quit``.
+
+
 
 
 Long Build Times Got You Down?

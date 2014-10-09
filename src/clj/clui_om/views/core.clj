@@ -31,6 +31,7 @@
 (h/defsnippet kioo-om-tut-body "public/html/kioo-om-tut.tpl.html" [:div.spam] [])
 (h/defsnippet bootstrap-demo-body "public/html/bootstrap-demo.tpl.html" [:div.spam] [])
 (h/defsnippet page-alpha-body "public/html/page-alpha.tpl.html" [:div.spam] [])
+(h/defsnippet page-beta-body "public/html/page-beta.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -67,7 +68,14 @@
 
 (defn page-alpha []
   (bootstrap-page {:title "Page Alpha"
-                   :heading "All Custom, All The Time"
+                   :heading "Colored Tiles"
                    :content (page-alpha-body)}))
+
+(defn page-beta []
+  (bootstrap-page {:title "Page Beta"
+                   :heading "Om Card Tricks"
+                   :content (page-beta-body)}))
+
+
 
 
