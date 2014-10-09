@@ -52,14 +52,13 @@
                          (->Card r s)))
 
 (defn card-display-txt
-  [cursor owner]
+  [card owner]
   "Displays a minimal, mostly-text display of a single card.
    Compare to the more-elaborate (card-display-gui)"
   (reify
     om/IRender
     (render [_]
-      (let [card (:card cursor)
-            col (red-black card)] 
+      (let [col (red-black card)] 
         (dom/span #js {:className (str "cardDisplay " (name col))
                        :title (verbose-name card)
                        :alt (verbose-name card)
@@ -79,11 +78,37 @@
     (render-state [_ {:keys [draw shuffle]}]
       (dom/div #js {:className "deckDisplay"}
                (dom/span #js {:className "deckIcon"}
-                (dom/span #js {:className "glyphicon glyphicon-align-justify"})
-                (dom/span #js {:className "deckCensus"} (str "(" (count (:deck cursor))  " cards)")))
+                         (dom/img #js {:className "deckImg"
+                                       :src "images/deckAlpha.png"
+                                       :alt "Deck of cards (image)"
+                                       :height 42
+                                       :width 31})
+                         (dom/span #js {:className "deckCensus"} (count (:deck cursor))))
                (dom/button #js {:className "btn btn-default"
                                 :onClick (fn [e] (put! draw "(deck-display):: draw button click!"))
                                 :type "button"} "Draw A Card")
                (dom/button #js {:className "btn btn-default"
                                 :onClick #(put! shuffle "(deck-display):: shuffle btton click!")
                                 :type "button"} "Shuffle Deck")))))
+
+(defn hand-display
+  [cursor owner]
+  "Displays a set of currently-held cards."
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:showing true})
+    om/IRenderState
+    (render-state [_ {:keys [showing]}]
+      (let [hand (:hand cursor)]
+        (.log js/console "hand-display rendering:: " (count hand) " cards in hand: " hand)
+        (dom/div #js {:className "cardDisplay"}
+                   (dom/div #js {:className "cardStatus"}
+                            (dom/span #js {:className "numCards"} (count hand)) 
+                              (dom/span #js {:className "showing"}
+                                          (if showing  "Face up" "Face down")))
+                   ;; om dom children must be either loose (as above)
+                   ;; or turned into a JavaScript array (as below)
+                   (apply dom/div #js {:className "cards"}
+                          (om/build-all card-display-txt hand)))))))
+

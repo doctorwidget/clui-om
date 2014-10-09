@@ -19,6 +19,10 @@ p {
   margin: 1em;
 }
 
+.cardDisplay {
+  display: inline-block;
+}
+
 span.cardDisplay {
   padding: 0.5em;
   margin: 0.5em;
@@ -43,4 +47,32 @@ span.glyphicon-align-justify {
 
 span.deckCensus {
   font-family: monospace;
+}
+
+.cardStatus {
+  position: relative;
+  padding: 0.3em;
+  width: 5em;
+  min-width: 5em;
+  height: 3em;
+  min-height: 2em;
+  border: 1px solid gray;
+  text-align: center;
+}
+
+.cardStatus .numCards {
+  position: absolute;
+  top: 0.1em;
+  left: 0.01em;
+  width: 100%;
+  font-family: monospace;
+}
+
+.cardStatus .showing {
+  position: absolute;
+  bottom: 0.1em;
+  left: 0.01em;
+  width: 100%;
+  font-style: italic;
+  font-size: 80%
 }

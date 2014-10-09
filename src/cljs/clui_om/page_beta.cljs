@@ -6,23 +6,33 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
 
-;; Also, one of the things I'm experimenting with on this page is the use of
-;; core.async channels for all event handling. Rather than passing an event
-;; handler function downstream to lower components, a higher component instead
-;; passes an already-instantiated channel. The lower-level component can then
-;; push event data (possibly a map with :event and :data keys) onto that
-;; channel, while the higher level component sets up a perpetual (go-loop) to
-;; pull events off of it. 
+;; Om application state should never include lazy sequences, but that's exactly
+;; what (shuffle) returns by default... so we force it to be realized via (vec)
+(def shuffled-deck
+  (apply list (shuffle (c/fresh-deck))))
 
-;; The application state cannot include lazy sequences, which is what (shuffle)
-;; returns by default... so we force it to be realized via (apply list...).
-(def shuffled-deck (apply list (shuffle (c/fresh-deck))))
+;; Om is VERY PICKY about starter sequences... trying to use an empty vector
+;; resulted in a 100% total fail with very unhelpful debugger messages.
+(def starter-hand
+  (list))
 
-(def app-state (atom {:most-recent-activity "Nothing yet..."
-                      :deck shuffled-deck} ))
+(def app-state (atom {:deck shuffled-deck
+                      :hand starter-hand}))
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
 (def BETA-ROOT (.getElementById js/document "beta-div"))
+
+(defn draw! [app]
+  (let [hand (@app :hand)
+        deck (@app :deck)]
+    (om/transact! app :hand #(conj % (first deck)))
+    (.log js/console (str "Hand is now: " (@app :hand)))
+    (om/update! app :deck (rest deck))
+    (.log js/console (str "Deck count: " (count (@app :deck))))))
+
+(defn shuffle! [app]
+  (om/update! app :hand (list))
+  (om/update! app :deck (apply list (shuffle (c/fresh-deck)))))
 
 (defn main-widget [app owner opts]
   (reify
@@ -37,10 +47,12 @@
         (go (loop []
               (let [request (<! draw)]
                 (.log js/console (str "(main-widget):: Draw request: " request))
+                (draw! app)
                 (recur))))
         (go (loop []
               (let [request (<! shuffle)]
                 (.log js/console (str "(main-widget):: Shuffle request: " request))
+                (shuffle! app)
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [draw shuffle]}]
@@ -49,13 +61,16 @@
                  (om/build c/deck-display app
                            {:init-state {:draw draw :shuffle shuffle}})
                  (dom/hr nil)
-                 (dom/div #js {:className "topCard"}
-                          (dom/span nil "Sneak Peek At Top Card: ")
-                          ;; NOTE: cursor argument is a plain old map.
-                          ;; No need to manually wrap it up as an atom.
-                          ;; Nor any need to try to extract it from the app-state.
-                          ;; Simple read-only cases like this can just take maps!
-                          (om/build c/card-display-txt {:card top-card})))))))                  
+                 (if top-card 
+                   (dom/div #js {:className "topCard"}
+                            (dom/span nil "Sneak Peek At Top Card: ")
+                            ;; NOTE: cursor argument is a plain old map.
+                            ;; No need to manually wrap it up as an atom.
+                            ;; Nor any need to try to extract it from the app-state.
+                            ;; Simple read-only cases like this can just take maps!
+                            (om/build c/card-display-txt top-card)))
+                 (dom/hr nil)
+                 (om/build c/hand-display app))))))                  
                       
 (defn ^:export main
   "Initialize page beta"
