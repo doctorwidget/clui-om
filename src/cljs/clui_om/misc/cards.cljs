@@ -36,6 +36,7 @@
   (red-black [this] "Returns :red or :black as appropriate"))
 
 (defrecord Card [rank suit]
+  ;; VERY IMPORTANT: see the implementation of the om/IToCursor protocol!
   ICardUtils
   (verbose-name [this]
     (str (nth english-ranks (:rank this)) " of " (name (:suit this))))
@@ -46,10 +47,29 @@
   (beats? [this other]
     (> (:rank this) (:rank other)))
   (red-black [this]
-    (if (#{:hearts :diamonds} (:suit this)) :red :black)))
+    (if (#{:hearts :diamonds} (:suit this)) :red :black))
+  ;; Om has a subtle problem with all (defrecord) instances! In the Om source
+  ;; you can see that all cursors are passed to the (om/IToCursor) protocol at
+  ;; some point. Since that protocol has no default implementation for record
+  ;; instances, those instances get wrapped in a spurious MapCursor instance
+  ;; layer, which breaks your ability to interact with them further. Therefore,
+  ;; we implement a sensible default for that protocol. Presumably, this exact
+  ;; same code should work as a fix for all (defrecord) definitions, which means
+  ;; this is the sort of thing that might end up incorporated into the Om core
+  ;; at some point. The flip side of this is that (I think) there's no way
+  ;; *updating* the resulting pure value could possibly update the overall
+  ;; application state. That means you should probably use (defrecord) inside Om
+  ;; if and only if you are dealing with read-only tokens like playing cards,
+  ;; and not for any potentially mutable data.
+  om/IToCursor
+  (-to-cursor [value state path]
+    value))
 
 (defn fresh-deck [] (for [r ranks s suits]
-                         (->Card r s)))
+                      (->Card r s)))
+
+(defn shuffled-deck []
+  (shuffle (fresh-deck)))
 
 (defn card-display-txt
   [card owner]
