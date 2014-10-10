@@ -1,5 +1,6 @@
 (ns clui-om.misc.cards
-  (:require [cljs.core.async :refer [put! <! >! chan]]
+  (:require-macros [cljs.core.async.macros :refer [go-loop]]) 
+  (:require [cljs.core.async :refer [put! <! >! chan timeout]]
             [clojure.string :as s]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
@@ -85,6 +86,25 @@
                        :dangerouslySetInnerHTML
                        #js {:__html (entity-name card)}})))))
 
+(def deck-images ["images/deckAlpha.png" "images/deckShuffling.png"
+                "images/deckShuffling2.png" "images/deckShuffling3.png"
+                "images/deckShuffling4.png" "images/deckBeta.png"])
+
+(defn shuffled-images []  (shuffle (concat deck-images deck-images deck-images)))
+
+(defn rotate-images [owner images]
+  "Given an owning component with a state, rotates an :img-seq
+   state property on a short timer. Can be used with *any* component
+   that uses an :img-seq property to show an HTML image. See the
+   implementation of the (deck-display) component."
+  (go-loop [bag images]
+           (if-let [remaining (next bag)]
+             (do
+               (om/set-state! owner :img-seq remaining)
+               (<! (timeout 80)) ; just a pause!
+               (recur remaining))
+             (om/set-state! owner :img-seq images))))
+
 (defn deck-display
   [cursor owner]
   "Displays the current deck count, plus two buttons: one to draw one card, and
@@ -94,22 +114,29 @@
   map means we don't need to implement the IInitState protocol in this class
   explicitly; we get our state object via the call to om/build instead."
   (reify
+    om/IInitState
+    (init-state [_]
+      {:img-seq (shuffled-images)})
     om/IRenderState
-    (render-state [_ {:keys [draw shuffle]}]
+    (render-state [_ {:keys [draw shuffle img-seq]}]
       (dom/div #js {:className "deckDisplay"}
                (dom/span #js {:className "deckIcon"}
                          (dom/img #js {:className "deckImg"
-                                       :src "images/deckAlpha.png"
+                                       :src (first img-seq)
                                        :alt "Deck of cards (image)"
                                        :height 42
                                        :width 31})
                          (dom/span #js {:className "deckCensus"} (count (:deck cursor))))
                (dom/button #js {:className "btn btn-default"
-                                :onClick (fn [e] (put! draw "(deck-display):: draw button click!"))
+                                :onClick #(put! draw "(deck-display):: draw button click!")
                                 :type "button"} "Draw A Card")
-               (dom/button #js {:className "btn btn-default"
-                                :onClick #(put! shuffle "(deck-display):: shuffle btton click!")
-                                :type "button"} "Shuffle Deck")))))
+               (dom/button (clj->js  {:className "btn btn-default"
+                                      :onClick (fn [e]
+                                                 (do
+                                                   (put! shuffle "(deck-display):: shuffle btton click!")
+                                                   (rotate-images owner (shuffled-images))))
+                                      :type "button"})
+                           "Shuffle Deck")))))
 
 (defn hand-display
   [cursor owner]
