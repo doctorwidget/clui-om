@@ -16,6 +16,8 @@
   (GET "/bootstrap-demo" [] (views/bootstrap-demo-page))
   (GET "/page-alpha" [] (views/page-alpha))
   (GET "/page-beta" [] (views/page-beta))
+  (GET "/page-gamma" [] (views/page-gamma))
+  (GET "/draggable-demo" [] (views/draggable-page))
   (route/resources "/")
   (route/not-found "Not Found"))
 

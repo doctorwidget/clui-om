@@ -12,7 +12,6 @@
                       :hand []}))
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
-(def BETA-ROOT (.getElementById js/document "beta-div"))
 
 ;; We only *ever* want to use 100% genuine honest-to-god vectors in the app
 ;; state. That means we must rely *solely* on (conj), (peek), and (pop), and

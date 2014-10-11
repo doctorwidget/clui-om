@@ -76,3 +76,46 @@ span.deckCensus {
   font-style: italic;
   font-size: 80%
 }
+
+.morphSprite {
+    border: 2px solid blue;
+    -webkit-transition: all 1s;
+    transition: all 1s;    
+}
+
+.morphSprite.hovering {
+    border-width: 6px;
+    border-color: #00FF00;
+    background-color: #00FFAA;
+}
+
+.spriteLabel {
+    color: blue;
+}
+
+.canvasDiv {
+    background-color: cornsilk;
+    border: 2px dotted red;
+}
+
+.dragSpriteTitle {
+    width: 100%;
+    text-align: center;
+    background-color: lightsalmon;
+    font-size: 80%;
+    -webkit-transition: all 0.5s;
+    transition: all 1s;
+}
+
+.dragSpriteTitle:hover {
+    background-color: orangered;
+    color: lightseagreen;
+}
+
+
+.dragSpriteMessage {
+    width: 100%;
+    height: 100%;
+    background-color: lightgreen;
+    font-family: monospace;
+}

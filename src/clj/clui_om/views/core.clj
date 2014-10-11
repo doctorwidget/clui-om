@@ -17,6 +17,13 @@
   [:h1] (h/content (:heading context))
   [:#page-contents] (h/content (:content context)))
 
+;; a base template that includes very little
+(h/deftemplate spartan-page
+  "public/html/spartan.html"
+  [context]
+  [:title] (h/content (:title context))
+  [:#page-contents] (h/content (:content context)))
+
 ;; snippets should resolve to a blob of HTML, but not necessarily
 ;; a complete page! Even if you target a fragment document with
 ;; the intent of returning the whole fragment, you still have to
@@ -32,6 +39,8 @@
 (h/defsnippet bootstrap-demo-body "public/html/bootstrap-demo.tpl.html" [:div.spam] [])
 (h/defsnippet page-alpha-body "public/html/page-alpha.tpl.html" [:div.spam] [])
 (h/defsnippet page-beta-body "public/html/page-beta.tpl.html" [:div.spam] [])
+(h/defsnippet page-gamma-body "public/html/page-gamma.tpl.html" [:div.spam] [])
+(h/defsnippet draggable-page-body "public/html/draggable.tpl.html" [:div.main] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -73,8 +82,17 @@
 
 (defn page-beta []
   (bootstrap-page {:title "Page Beta"
-                   :heading "Om Card Tricks"
+                   :heading "Card Tricks"
                    :content (page-beta-body)}))
+
+(defn page-gamma []
+  (bootstrap-page {:title "Page Gamma"
+                   :heading "Drag & Drop"
+                   :content (page-gamma-body)}))
+
+(defn draggable-page []
+  (spartan-page {:title "om-draggable demo"
+               :content (draggable-page-body)}))
 
 
 
