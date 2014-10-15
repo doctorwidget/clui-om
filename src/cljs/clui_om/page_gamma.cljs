@@ -5,21 +5,59 @@
             [om.dom :as dom :include-macros true]))
 
 
+;;;; APP STATE
+(def app-state (atom {:board {:width 800
+                              :height 600
+                              :mouse-move (chan (sliding-buffer 1))
+                              :sprites [{:x 300 :y 200 :w 60 :h 30 :type :morph-sprite}
+                                        {:x 100 :y 100 :w 120 :h 160 :type :draggable-sprite
+                                         :title "Click to drag me" :message "Hello world!"
+                                         :prior-drag-loc [nil nil]}
+                                        ]}}))
+
+(def ALPHA-ROOT (.getElementById js/document "alpha-div"))
+
+
 ;;;; HELPER FUNCTIONS
 
-;This first helper exists because careful experimentation proves that
-;passing React/Om events through a core.async channel breaks them!
-;Pre-channel, accessing  their properties works as expected, with no
-;surprises of any kind. But post-channel they have become opaque
-;[Object objects] with none of the expected properties or methods.
+;This first helper exists because careful experimentation proves that passing
+;React/Om events through a core.async channel breaks them! Pre-channel,
+;accessing their properties works as expected, with no surprises of any kind.
+;But post-channel they have become opaque [Object objects] with none of the
+;expected properties or methods.
 
-;Note that this bug is **only** evident  for events that have been
-;passed through the whole Om/React wrapper chain! It does **not**
-;occur with raw JavaScript events!
+;Note that this bug is **only** evident for events that have been passed through
+;the whole Om/React wrapper chain! It does **not** occur with raw JavaScript
+;events!
 
 ;; In summary:
 ;; React/Om events + core.async channel = sad panda!
 ;; Raw JavaScript events + core.async channel = works great!
+;;
+;; The take away message is that you're better off not trying to ever pass raw
+;; events into a core.async channel. It seems like a fast-and-efficient way to
+;; do your business with little or no ceremony, but it is ultimately an
+;; antipattern!
+
+;; You should have an idea about what kind of data will be passing through any
+;; particular channel, and you should extract the needed data from the raw
+;; Javascript event, and place actual ClojureScript values onto the channels.
+;; Not only does that let you isolate the ugly native Javascript code into a few
+;; reusable helpers, it lets you add other sources of input to the channels that
+;; don't start out as events.
+
+;; For example, a human player might interact with a game via mouse events, but
+;; you might also want to trigger those same functions directly for a computer
+;; player. If the effect functions take only Javascript events as input, you
+;; have to manually create Javascript events even for the computer player! But
+;; if the effect functions work off of pure ClojureScript values, you can
+;; elegantly provide those inputs for the computer player.
+
+;; In summary, you can't avoid dealing with Javascript event objects, but your
+;; first order of business should always be to convert them into pure
+;; ClojureScript values. Tolerate the Javascript only so long as is absolutely
+;; necessary, and no longer. You can *always* do that conversion at the point of
+;; the event listener, **prior** to putting anything on a core.async channel. 
 
 (defn evt->clj [e]
   "Get a subset of a raw JavaScript events fields as a ClojureScript map. "
@@ -54,9 +92,10 @@
       (if all (.log js/console (str "ScreenXY (clj " (:screen-x e) ", " (:screen-y e)))))))
 
 
-(defn sprite-dims [x y w h]
-  ;; Generate a map with the appropriate CSS for an object of the given
-  ;; x and y coordinates, with the given width (w) and height (h)
+(defn sprite-dims
+  "Generate a map with the appropriate CSS for an object of the given
+  x and y coordinates, with the given width (w) and height (h)"
+  [x y w h]
   {:width w
    :minWidth w
    :height h
@@ -66,19 +105,10 @@
    :position "absolute"})
 
 
-;;;; APP STATE
-(def app-state (atom {:board {:width 800
-                              :height 600
-                              :mouse-move (chan (sliding-buffer 1))
-                              :sprites [{:x 300 :y 200 :w 60 :h 30 :type :morph-sprite}
-                                        {:x 100 :y 100 :w 120 :h 160 :type :draggable-sprite
-                                         :title "Click to drag me" :message "Hello world!"
-                                         :prior-drag-loc [nil nil]}
-                                        ]}}))
-
-(def ALPHA-ROOT (.getElementById js/document "alpha-div"))
-
-(defn morph-dims [x y w h morphed]
+(defn morph-dims
+  "Generate one of two CSS maps, depending on the value of a final
+  boolean argument ('morphed')"
+  [x y w h morphed]
   (let [grow 2
         bigw (* grow w)
         bigh (* grow h)
@@ -178,7 +208,6 @@
                                                  (:h cursor)))
                     :onMouseDown #(put! drag-on (evt->clj %))
                     :onMouseUp #(put! drag-off (evt->clj %))
-                    :onMouseOut #(put! drag-off (evt->clj %))
                     :onMouseMove #(put! mouse-move (evt->clj %))}
                (dom/div #js {:className "dragSpriteTitle" }
                         (:title cursor))
