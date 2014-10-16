@@ -9,11 +9,27 @@
   [:h1] (h/content (:heading context))
   [:#page-contents] (h/content (:content context)))
 
+;; helper function that yields one single stylesheet element
+(defn stylesheet [href]
+  (first (h/html [:link {:href href :rel "stylesheet" :type "text/css"}])))
+
+;; helper function that gives one script element
+(defn script [src]
+  (first (h/html [:script {:src src :type "text/javascript"}])))
+
 ;; a base template that includes the boostrap stylesheets
+;; Also, unlike the earlier templates, this one can add arbitrary numbers
+;; of stylesheets and script tags, just by including them as part of the
+;; initial context dictionary. 
 (h/deftemplate bootstrap-page
   "public/html/bootstrap.html"
-  [context]
+  [{:keys [extra-css extra-js] :as context}]
   [:title] (h/content (:title context))
+  ;; next transform appends one link per href if extra-css is a vec of hrefs 
+  ;; and it gracefully does nothing when extra-css is nil/empty
+  [:head] (h/append (map stylesheet extra-css))
+  ;; Similarly, this appends any number of scripts to the bottom of the page
+  [:body] (h/append (map script extra-js))
   [:h1] (h/content (:heading context))
   [:#page-contents] (h/content (:content context)))
 
@@ -41,6 +57,7 @@
 (h/defsnippet page-beta-body "public/html/page-beta.tpl.html" [:div.spam] [])
 (h/defsnippet page-gamma-body "public/html/page-gamma.tpl.html" [:div.spam] [])
 (h/defsnippet draggable-page-body "public/html/draggable.tpl.html" [:div.main] [])
+(h/defsnippet page-delta-body "public/html/page-delta.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -94,6 +111,18 @@
   (spartan-page {:title "om-draggable demo"
                :content (draggable-page-body)}))
 
-
+;; note! bad links included just to demonstrate the ability to load
+;; arbitrary numbers of extra JS and/or CSS files to wherever we
+;; want (i.e. the top or bottom of the head, or the top or bottom
+;; of the body, etcetera).
+(defn page-delta []
+  (bootstrap-page {:title "Page Delta"
+                   :heading "CSS Tricks"
+                   :content (page-delta-body)
+                   :extra-css ["css/clui_anims.css"
+                               #_"css/other_stuff.css"
+                               #_"css/third_stuff.css"]
+                   :extra-js [#_"js/my_fake_script.js"
+                              #_"js/my_mock_script.js"]}))
 
 

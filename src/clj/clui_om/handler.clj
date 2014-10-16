@@ -18,6 +18,7 @@
   (GET "/page-beta" [] (views/page-beta))
   (GET "/page-gamma" [] (views/page-gamma))
   (GET "/draggable-demo" [] (views/draggable-page))
+  (GET "/page-delta" [] (views/page-delta))
   (route/resources "/")
   (route/not-found "Not Found"))
 
