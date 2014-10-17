@@ -120,7 +120,7 @@
                    :heading "CSS Tricks"
                    :content (page-delta-body)
                    :extra-css ["css/clui_anims.css"
-                               #_"css/other_stuff.css"
+                               "css/animations.css"
                                #_"css/third_stuff.css"]
                    :extra-js [#_"js/my_fake_script.js"
                               #_"js/my_mock_script.js"]}))

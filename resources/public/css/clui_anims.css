@@ -1,0 +1,51 @@
+/** styles for page delta 
+   Main focus is on animations, but also some other stuff.
+**/
+.main-widget {
+   margin: 1em;
+   box-shadow: 10px 10px 5px #888888;
+}
+
+.toolbar {
+   height: 3em;
+   width: 100%;
+   border: 1px solid blue;
+   border-radius: 1em;
+   background-color: gainsboro;
+}
+
+.toolbar select {
+  margin: 0.6em;
+  padding: 0.6em;
+}
+
+.toolbar button {
+  margin: 0.6em;
+}
+
+.iconbox {
+   height: 20em;
+   width: 100%;
+   border: 1px solid green;
+   background-color: lavender;
+}
+
+.iconOuter {
+   display: inline-block;
+   width: 9em;
+   height: 9em;
+   padding: 1.5em;
+}
+
+.iconInner {
+   display: table;
+   width: 100%;
+   height: 100%;
+}
+
+.iconCell {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 2em;
+}
