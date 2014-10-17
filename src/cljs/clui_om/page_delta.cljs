@@ -11,7 +11,7 @@
 (def colors {:red "#FF0000"
              :green "#00FF00"
              :blue "#0000FF"
-             :orange "#FFCC00"
+             :orange "#CC6600"
              :yellow "#CCCC00"
              :purple "#CC00CC"
              })
@@ -25,6 +25,18 @@
 
 (def sizes  {:small 0.8 :medium 1 :large 1.5 :jumbo 2})
 
+
+(defn random-icon
+  "Get a randomly-generated map of icon settings"
+  []
+  (let [rand-color (rand-nth (keys colors))
+        rand-size (rand-nth (keys sizes))
+        rand-glyph (rand-nth (keys glyphs))]
+    {:color rand-color
+     :size rand-size
+     :glyph rand-glyph
+     :pinned false}))
+
 (def app-state (atom {:greeting "Hello Delta!"
                       :sizes sizes
                       :size  (first (keys sizes))
@@ -32,10 +44,11 @@
                       :color (first (keys colors))
                       :glyphs glyphs
                       :glyph (first (keys glyphs))
-                      :icons [{:glyph :tower :size 1 :color :orange :pinned false}
-                              {:glyph :phone :size 1.5 :color :purple :pinned false}
-                              {:glyph :bars :size 2 :color :yellow :pinned false}
-                              {:glyph :tree :size 1.5 :color :green :pinned false}]}))
+                      :icons (vec (take 16 (repeatedly random-icon)))
+                             #_[{:glyph :tower :size :small :color :orange :pinned false}
+                              {:glyph :phone :size :medium :color :purple :pinned false}
+                              {:glyph :bars :size :large :color :yellow :pinned false}
+                              {:glyph :tree :size :jumbo :color :green :pinned false}]}))
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
 
@@ -44,13 +57,12 @@
 ;; HELPER FUNCTIONS
 ;;*****************************************************************************
 
-
-
 (defn icon-inner-style
   [{:keys [size color pinned]} owner]
   (let [hovering (om/get-state owner :hovering)
-        htmlcolor (color colors)
-        final-size (if (or pinned hovering) (* 3 size) size)
+        htmlcolor (colors color)
+        startsize (size sizes)
+        final-size (if (or pinned hovering) (* 3 startsize) startsize)
         final-background (if pinned htmlcolor "transparent")
         final-color (if pinned "#000000" htmlcolor)] 
     {:border (str final-size "px solid " final-color)
@@ -60,9 +72,10 @@
   [{:keys [size color pinned]} owner]
   (let [hovering (om/get-state owner :hovering)
         htmlcolor (color colors)
+        fontsize (size sizes)
         final-color (if pinned "#000000" htmlcolor)]
     {:color final-color
-     :font-size (str size "em")}))
+     :font-size (str fontsize "em")}))
 
 (defn icon-classes
   [{:keys [glyph]} owner]
@@ -82,6 +95,29 @@
    :left x
    :top y
    :position "absolute"})
+
+(defn new-icon
+  "Get the map of settings for a new icon based on the app.
+   The app should be deref'd (or not!) before sending it as an argument,
+   because only the calling function has any clue whether or not we are
+   in the render phase."
+  [app]
+  (let [new-color (:color app)
+        new-size (:size app)
+        new-glyph (:glyph app)
+        msg (str "(new-icon):: using " new-color ", " new-glyph ", " new-size)]
+    (.log js/console msg) 
+    {:color new-color
+     :size new-size
+     :glyph new-glyph
+     :pinned false}))
+
+(defn update-pinned
+  "Given a list of target icons, a keyword and a new value, return an updated
+  vector with that kw updated for each icons, but only when :pinned is truthy"
+  [icons kw new]
+  (mapv #(if (:pinned %) (assoc % kw new) %) icons))
+
 
 
 ;;*****************************************************************************
@@ -180,24 +216,31 @@
               (let [choice (<! glyph-chan)]
                 (.log js/console "(toolbar):: glyph choice: " (str choice))
                 (om/update! cursor :glyph choice)
+                (om/transact! cursor :icons #(update-pinned % :glyph choice))
                 (recur))))
         (go (loop []
               (let [choice (<! color-chan)]
                 (.log js/console "(toolbar):: color choice: " (str choice))
                 (om/update! cursor :color choice)
-                (recur))))
+                (om/transact! cursor :icons #(update-pinned % :color choice))
+              (recur))))
         (go (loop []
               (let [choice (<! size-chan)]
                 (.log js/console "(toolbar):: size choice: " (str choice))
                 (om/update! cursor :size choice)
+                (om/transact! cursor :icons #(update-pinned % :size choice))
                 (recur))))
         (go (loop []
-              (let [_ (<! add-chan)]
+              (let [_ (<! add-chan)
+                    app @cursor]
                 (.log js/console "(toolbar):: user clicked add")
+                (om/transact! cursor :icons #(conj % (new-icon @cursor)))
                 (recur))))
         (go (loop []
               (let [_ (<! del-chan)]
                 (.log js/console "(toolbar):: user clicked del")
+                ;; use filterv, because lazy sequences do not belong inside cursors!
+                (om/transact! cursor :icons #(filterv (complement :pinned) %))
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [glyph-chan color-chan size-chan add-chan del-chan]}]
