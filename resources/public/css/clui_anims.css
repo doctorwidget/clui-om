@@ -20,7 +20,7 @@
 }
 
 .toolbar button {
-  margin: 0.6em;
+  margin: 0.2em;
 }
 
 .iconbox {
@@ -48,4 +48,139 @@
   vertical-align: middle;
   text-align: center;
   font-size: 2em;
+}
+
+.onStage {
+   -webkit-transition: all 2s; 
+   transition: all 2s;
+}
+
+
+
+.enterLeft{
+	animation-name: enterLeft;
+	-webkit-animation-name: enterLeft;	
+
+	animation-duration: 1s;	
+	-webkit-animation-duration: 1s;
+
+	animation-timing-function: ease;	
+	-webkit-animation-timing-function: ease;	
+
+	visibility: visible !important;						
+}
+
+@keyframes enterLeft {
+	0% {
+		transform: translateX(-500%); /** -500 **/
+	}
+	50%{
+		transform: translateX(20%); /** 40% **/
+	}
+	65%{
+		transform: translateX(-10%); /** -20% **/
+	}
+	80%{
+		transform: translateX(10%);  /** 20% **/
+	}
+	95%{
+		transform: translateX(5%); /** 10% **/
+	}			
+	100% {
+		transform: translateX(0%); /** 0% **/
+	}		
+}
+
+@-webkit-keyframes enterLeft {
+	0% {
+		-webkit-transform: translateX(-500%);
+	}
+	50%{
+		-webkit-transform: translateX(20%);
+	}
+	65%{
+		-webkit-transform: translateX(-10%);
+	}
+	80%{
+		-webkit-transform: translateX(10%);
+	}
+	95%{
+		-webkit-transform: translateX(5%);
+	}			
+	100% {
+		-webkit-transform: translateX(0%);
+	}	
+}
+
+
+
+
+.exitLeft{
+	animation-name: exitLeft;
+	-webkit-animation-name: exitLeft;	
+
+	animation-duration: 0.6s;	
+	-webkit-animation-duration: 0.6s;
+
+	animation-timing-function: ease-out; /** start fast **/	
+	-webkit-animation-timing-function: ease-out;	
+
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+
+	visibility: visible !important;						
+}
+
+@keyframes exitLeft {
+	0% {
+		transform: translateX(0%); /** 0 **/
+        opacity: 1.0;
+	}
+	40%{
+		transform: translateX(-5%); /** -2% **/
+        opacity: 0.9
+	}
+	55%{
+		transform: translateX(10%); /** 4% **/
+        opacity: 0.8;
+	}
+	70%{
+		transform: translateX(-10%);  /** -4% **/
+        opacity: 0.7;
+	}
+	85%{
+		transform: translateX(20%); /** 8% **/
+        opacity: 0.4;
+	}			
+	100% {
+		transform: translateX(-400%); /** -100% **/
+        opacity: 0;
+	}		
+}
+
+@-webkit-keyframes exitLeft {
+	0% {
+		-webkit-transform: translateX(0%);
+        opacity: 1.0;
+	}
+	40%{
+		-webkit-transform: translateX(-5%);
+        opacity: 0.9;
+	}
+	55%{
+		-webkit-transform: translateX(10%);
+        opacity: 0.8;
+	}
+	70%{
+		-webkit-transform: translateX(-10%);
+        opacity: 0.7;
+	}
+	85%{
+		-webkit-transform: translateX(20%);
+        opacity: 0.4;
+	}			
+	100% {
+		-webkit-transform: translateX(-400%);
+        opacity: 0;
+	}	
 }

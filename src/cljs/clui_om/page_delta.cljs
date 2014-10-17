@@ -35,7 +35,8 @@
     {:color rand-color
      :size rand-size
      :glyph rand-glyph
-     :pinned false}))
+     :pinned false
+     :entering true}))
 
 (def app-state (atom {:greeting "Hello Delta!"
                       :sizes sizes
@@ -44,11 +45,7 @@
                       :color (first (keys colors))
                       :glyphs glyphs
                       :glyph (first (keys glyphs))
-                      :icons (vec (take 16 (repeatedly random-icon)))
-                             #_[{:glyph :tower :size :small :color :orange :pinned false}
-                              {:glyph :phone :size :medium :color :purple :pinned false}
-                              {:glyph :bars :size :large :color :yellow :pinned false}
-                              {:glyph :tree :size :jumbo :color :green :pinned false}]}))
+                      :icons (vec (take 16 (repeatedly random-icon)))}))
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
 
@@ -57,9 +54,16 @@
 ;; HELPER FUNCTIONS
 ;;*****************************************************************************
 
+(defn icon-outer-props
+  [{:keys [entering exiting]} state]
+  (let [enter (if entering " enterLeft")
+        exit (if exiting " exitLeft")
+        stable (if (and (not entering) (not exiting)) " onStage")]
+    (clj->js {:className (str "iconOuter" enter exit stable)})))
+
 (defn icon-inner-style
-  [{:keys [size color pinned]} owner]
-  (let [hovering (om/get-state owner :hovering)
+  [{:keys [size color pinned]} state]
+  (let [hovering (state :hovering)
         htmlcolor (colors color)
         startsize (size sizes)
         final-size (if (or pinned hovering) (* 3 startsize) startsize)
@@ -69,8 +73,8 @@
      :background-color final-background}))
 
 (defn icon-style
-  [{:keys [size color pinned]} owner]
-  (let [hovering (om/get-state owner :hovering)
+  [{:keys [size color pinned]} state]
+  (let [hovering (state :hovering)
         htmlcolor (color colors)
         fontsize (size sizes)
         final-color (if pinned "#000000" htmlcolor)]
@@ -78,10 +82,10 @@
      :font-size (str fontsize "em")}))
 
 (defn icon-classes
-  [{:keys [glyph]} owner]
-  (let [hovering (om/get-state owner :hovering)
+  [{:keys [glyph]} state]
+  (let [hovering (state :hovering)
         final-glyph (glyphs glyph)
-        final-anim (if hovering "tossing" "bigEntrance")] 
+        final-anim (if hovering "pulse" "bigEntrance")] 
     (str "glyphicon glyphicon-" final-glyph " " final-anim)))
 
 (defn sprite-dims
@@ -96,7 +100,7 @@
    :top y
    :position "absolute"})
 
-(defn new-icon
+(defn generate-new-icon
   "Get the map of settings for a new icon based on the app.
    The app should be deref'd (or not!) before sending it as an argument,
    because only the calling function has any clue whether or not we are
@@ -110,7 +114,8 @@
     {:color new-color
      :size new-size
      :glyph new-glyph
-     :pinned false}))
+     :pinned false
+     :entering true}))
 
 (defn update-pinned
   "Given a list of target icons, a keyword and a new value, return an updated
@@ -160,16 +165,15 @@
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [clicks over out] :as state}]
-      (let [htmlcolor (colors (:color cursor))]
-        (dom/div #js {:className "iconOuter"}
-                 (dom/div (clj->js {:className "iconInner"
-                                    :onClick #(put! clicks %)
-                                    :onMouseOver #(put! over %)
-                                    :onMouseOut #(put! out %)
-                                    :style (icon-inner-style cursor owner)})
-                          (dom/div #js {:className "iconCell"}
-                                   (dom/span (clj->js {:className (icon-classes cursor owner)
-                                                       :style (icon-style cursor owner)})))))))))
+      (dom/div (icon-outer-props cursor state)
+               (dom/div (clj->js {:className "iconInner"
+                                  :onClick #(put! clicks %)
+                                  :onMouseOver #(put! over %)
+                                  :onMouseOut #(put! out %)
+                                  :style (icon-inner-style cursor state)})
+                        (dom/div #js {:className "iconCell"}
+                                 (dom/span (clj->js {:className (icon-classes cursor state)
+                                                     :style (icon-style cursor state)}))))))))
 
 (defn parse-choice [e channel]
   (let [choice (-> e .-target .-value)
@@ -208,10 +212,13 @@
        :color-chan (chan)
        :size-chan (chan)
        :add-chan (chan)
-       :del-chan (chan)})
+       :del-chan (chan)
+       :all-chan (chan)
+       :none-chan (chan)})
     om/IWillMount
     (will-mount [_]
-      (let [{:keys [glyph-chan color-chan size-chan add-chan del-chan]} (om/get-state owner)]
+      (let [{:keys [glyph-chan color-chan size-chan add-chan
+                    del-chan all-chan none-chan]} (om/get-state owner)]
         (go (loop []
               (let [choice (<! glyph-chan)]
                 (.log js/console "(toolbar):: glyph choice: " (str choice))
@@ -232,18 +239,40 @@
                 (recur))))
         (go (loop []
               (let [_ (<! add-chan)
-                    app @cursor]
+                    new-icon (generate-new-icon @cursor)]
                 (.log js/console "(toolbar):: user clicked add")
-                (om/transact! cursor :icons #(conj % (new-icon @cursor)))
+                (om/transact! cursor :icons #(conj % new-icon))
                 (recur))))
         (go (loop []
               (let [_ (<! del-chan)]
                 (.log js/console "(toolbar):: user clicked del")
+                ;; first sweep: add the exiting flag to the doomed
+                (om/transact! cursor :icons (fn [icons]
+                                              (mapv #(if (:pinned %)
+                                                      (merge % {:exiting true :entering false})
+                                                      (merge % {:exiting false :entering false}))
+                                                    icons)))
+                ;; then a delay with timeout:
+                (<! (timeout 900)) ;; just hang out and do nothing
+                ;; and then finally, remove those items from the app state
                 ;; use filterv, because lazy sequences do not belong inside cursors!
                 (om/transact! cursor :icons #(filterv (complement :pinned) %))
+                (recur))))
+        (go (loop []
+              (let [_ (<! all-chan)]
+                (.log js/console "(toolbar):: user clicked all")
+                (om/transact! cursor :icons (fn [icons]
+                                              (mapv #(assoc % :pinned true) icons)))
+                (recur))))
+        (go (loop []
+              (let [_ (<! none-chan)]
+                (.log js/console "(toolbar):: user clicked none")
+                (om/transact! cursor :icons (fn [icons]
+                                              (mapv #(assoc % :pinned false) icons)))
                 (recur))))))
     om/IRenderState
-    (render-state [_ {:keys [glyph-chan color-chan size-chan add-chan del-chan]}]
+    (render-state [_ {:keys [glyph-chan color-chan size-chan
+                             add-chan del-chan all-chan none-chan]}]
       (dom/div #js {:className "toolbar"}
                (om/build chooser (:glyphs cursor) {:opts {:channel glyph-chan}})
                (om/build chooser (:colors cursor) {:opts {:channel color-chan}})
@@ -253,7 +282,9 @@
                 (let [disabled (= 0 (count (filter :pinned (:icons cursor))))
                       base (when disabled {:disabled true :style {:color "#CCCCCC"}})] 
                   (clj->js (merge base {:onClick #(put! del-chan %)})))
-                "Delete")))))
+                "Delete")
+               (dom/button #js {:onClick #(put! all-chan %)} "All")
+               (dom/button #js {:onClick #(put! none-chan %)} "None")))))
 
 (defn iconbox
   "A component that displays an arbitrary number of icons."
