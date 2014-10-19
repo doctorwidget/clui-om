@@ -58,6 +58,7 @@
 (h/defsnippet page-gamma-body "public/html/page-gamma.tpl.html" [:div.spam] [])
 (h/defsnippet draggable-page-body "public/html/draggable.tpl.html" [:div.main] [])
 (h/defsnippet page-delta-body "public/html/page-delta.tpl.html" [:div.spam] [])
+(h/defsnippet page-epsilon-body "public/html/page-epsilon.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -111,10 +112,11 @@
   (spartan-page {:title "om-draggable demo"
                :content (draggable-page-body)}))
 
-;; note! bad links included just to demonstrate the ability to load
+;; note! (bootstrap-page) function now has the ability to load
 ;; arbitrary numbers of extra JS and/or CSS files to wherever we
 ;; want (i.e. the top or bottom of the head, or the top or bottom
-;; of the body, etcetera).
+;; of the body, etcetera). Just provide valid paths as a sequential
+;; collection under the :extra-css and/or :extra-js keys.
 (defn page-delta []
   (bootstrap-page {:title "Page Delta"
                    :heading "CSS Tricks"
@@ -124,5 +126,12 @@
                                #_"css/third_stuff.css"]
                    :extra-js [#_"js/my_fake_script.js"
                               #_"js/my_mock_script.js"]}))
+
+(defn page-epsilon []
+  (bootstrap-page {:title "Page Epsilon"
+                   :heading "WebAudio API Demonstration"
+                   :content (page-epsilon-body)
+                   :extra-css []
+                   :extra-js []}))
 
 

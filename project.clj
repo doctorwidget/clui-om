@@ -32,17 +32,26 @@
                  :compiler {:pretty-print true
                             :output-to "resources/public/js/clui_om.js"
                             :source-map "resources/public/js/clui_om.js.map"
-                            :output-dir "resources/public/js/out"
-                            :optimizations :simple
+                            :output-dir "resources/public/js/out-dev"
+                            ;:optimizations :simple
+                            :optimizations :whitespace
                             ;:preamble ["lib/react.js"]
-                            :externs ["lib/react-externs.js"]
+                            :externs ["lib/react-externs.js"
+                                      "lib/joy-externs.js"]
                             }}
                 {:source-paths ["src/cljs"]
                  :id "prod"
+                 ;; IMPORTANT: no duplicate output-dirs allowed! Each source map
+                 ;; target must have a unique :output-dir, just as it has a
+                 ;; unique :source-map property. The compiled file will contain
+                 ;; the correct cross-reference automatically.
                  :compiler {:output-to "resources/public/js/clui_om.min.js"
+                            :source-map "resources/public/js/clui_om.min.js.map"
+                            :output-dir "resources/public/js/out"
                             :optimizations :advanced
                             ;:preamble ["lib/react.min.js"]
-                            :externs ["lib/react-externs.js"]}}
+                            :externs ["lib/react-externs.js"
+                                      "lib/joy-externs.js"]}}
                 {:source-paths ["src/cljs" "test/cljs"]
                  :id "test"
                  :compiler {:output-to "resources/test/unit/clui_om_test.js"

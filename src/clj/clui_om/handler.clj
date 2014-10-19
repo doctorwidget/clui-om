@@ -19,6 +19,7 @@
   (GET "/page-gamma" [] (views/page-gamma))
   (GET "/draggable-demo" [] (views/draggable-page))
   (GET "/page-delta" [] (views/page-delta))
+  (GET "/page-epsilon" [] (views/page-epsilon))
   (route/resources "/")
   (route/not-found "Not Found"))
 
