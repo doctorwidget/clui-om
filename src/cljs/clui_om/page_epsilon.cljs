@@ -86,7 +86,8 @@
       {:hovering false
        :active false
        :pressure (chan)
-       :motion (chan)})
+       :motion (chan)
+       :sound :silence})
     om/IWillMount
     (will-mount [_]
       ;; previous pages in this project have used one channel per event type,
@@ -99,17 +100,17 @@
               (let [p (<! pressure)]
                 (if (= p :down)
                   (do 
-                    (.log js/console (str "Mouse press @ " label))
                     (om/set-state! owner :active true)
-                    (let [sound (oscillator-node @cursor)]
-                      (om/set-state! owner :sound sound)
-                      (.start sound)))
+                    (if (= :silence (om/get-state owner :sound))                      
+                      (let [sound (oscillator-node @cursor)]
+                        (om/set-state! owner :sound sound)
+                        (.start sound))))
                   (do 
-                    (.log js/console (str  "Mouse raised or exited @ " label))
                     (om/set-state! owner :active false)
-                    (if-let [sound (om/get-state owner :sound)]
-                      (do (.stop sound) 
-                          (om/set-state! owner :sound nil)))))
+                    (let [sound (om/get-state owner :sound)]
+                      (if (not= sound :silence)
+                        (do (.stop sound)
+                            (om/set-state! owner :sound :silence))))))
                 (recur))))
         (go (loop []
               (let [m (<! motion)]
@@ -119,8 +120,7 @@
                     (om/set-state! owner :hovering true))
                   (do 
                     (.log js/console (str  "Mouse out @ " label))
-                    (om/set-state! owner :hovering false)
-                    (put! pressure :up)))
+                    (om/set-state! owner :hovering false)))
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [hovering] :as state}]
