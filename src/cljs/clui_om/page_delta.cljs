@@ -64,13 +64,13 @@
 (defn icon-inner-style
   [{:keys [size color pinned]} state]
   (let [hovering (state :hovering)
-        htmlcolor (colors color)
+        htmlcolor (color colors)
         startsize (size sizes)
         final-size (if (or pinned hovering) (* 3 startsize) startsize)
         final-background (if pinned htmlcolor "transparent")
-        final-color (if pinned "#000000" htmlcolor)] 
+        final-color (if pinned "#000000" htmlcolor)]
     {:border (str final-size "px solid " final-color)
-     :background-color final-background}))
+     :backgroundColor final-background}))
 
 (defn icon-style
   [{:keys [size color pinned]} state]
@@ -79,7 +79,7 @@
         fontsize (size sizes)
         final-color (if pinned "#000000" htmlcolor)]
     {:color final-color
-     :font-size (str fontsize "em")}))
+     :fontSize (str fontsize "em")}))
 
 (defn icon-classes
   [{:keys [glyph]} state]
@@ -214,10 +214,11 @@
        :add-chan (chan)
        :del-chan (chan)
        :all-chan (chan)
-       :none-chan (chan)})
+       :none-chan (chan)
+       :rand-chan (chan)})
     om/IWillMount
     (will-mount [_]
-      (let [{:keys [glyph-chan color-chan size-chan add-chan
+      (let [{:keys [glyph-chan color-chan size-chan add-chan rand-chan
                     del-chan all-chan none-chan]} (om/get-state owner)]
         (go (loop []
               (let [choice (<! glyph-chan)]
@@ -241,6 +242,12 @@
               (let [_ (<! add-chan)
                     new-icon (generate-new-icon @cursor)]
                 (.log js/console "(toolbar):: user clicked add")
+                (om/transact! cursor :icons #(conj % new-icon))
+                (recur))))
+        (go (loop []
+              (let [_ (<! rand-chan)
+                    new-icon (random-icon)]
+                (.log js/console "(toolbar):: user clicked random")
                 (om/transact! cursor :icons #(conj % new-icon))
                 (recur))))
         (go (loop []
@@ -271,13 +278,14 @@
                                               (mapv #(assoc % :pinned false) icons)))
                 (recur))))))
     om/IRenderState
-    (render-state [_ {:keys [glyph-chan color-chan size-chan
+    (render-state [_ {:keys [glyph-chan color-chan size-chan rand-chan
                              add-chan del-chan all-chan none-chan]}]
       (dom/div #js {:className "toolbar"}
                (om/build chooser (:glyphs cursor) {:opts {:channel glyph-chan}})
                (om/build chooser (:colors cursor) {:opts {:channel color-chan}})
                (om/build chooser (:sizes cursor) {:opts {:channel size-chan}})
                (dom/button #js {:onClick #(put! add-chan %)} "Add")
+               (dom/button #js {:onClick #(put! rand-chan %)} "Rand")
                (dom/button
                 (let [disabled (= 0 (count (filter :pinned (:icons cursor))))
                       base (when disabled {:disabled true :style {:color "#CCCCCC"}})] 
@@ -292,8 +300,8 @@
   (reify
     om/IRender
     (render [_]
-      (dom/div #js {:className "iconbox"}
-          (into-array (om/build-all icon (:icons cursor)))))))
+      (apply dom/div #js {:className "iconbox"}
+               (om/build-all icon (:icons cursor))))))
 
 (defn main-widget
   "A component that displays a toolbar up top, and an icon-box down below."

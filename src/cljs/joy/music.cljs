@@ -1,10 +1,23 @@
 (ns joy.music)
 
+;; Entirely based on sample code from "Joy of Clojure", 2nd edition, by Fogus
+
 ;; See the Clojure (not ClojureScript) file at src/clj/joy/externs-for-cljs.clj
 ;; For handy code that can automatically analyze ClojureScript code that does
 ;; interop with an external library and outputs an appropriate externs file. BUT
 ;; note that I did gave to fine-tune that output to remove a few oddities (e.g.
 ;; it flagged my use of js/console as requiring a dummy declaration).
+
+;; Also note that the WebAudio API is rapidly evolving, and there are already
+;; multiple syntax changes to it since the 2nd edition of "Joy of Clojure" was
+;; published. For example, "createGainNode" has been shortened to "createGain",
+;; and "start" and "stop" have replaced "noteOn" and "noteOff". Just to mix
+;; things up further, some browsers (e.g. Webkit-based browsers) still accept
+;; both the older and newer syntax, whereas Firefox is very strict about the
+;; latest official API. If you are reviewing this code after October 20, 2014,
+;; it is entirely likely that there have been further changes in both the
+;; developing API and the implementation in different browsers. That's just life
+;; on the bleeding edge.
 
 (defn soft-attack
   "Takes two arguments: a WebAudio AudioContext object (a native JavaScript
@@ -36,8 +49,8 @@
    (let [node (.createOscillator ctx)]
      (set! (-> node .-frequency .-value) 440)
      (set! (-> node .-detune .-value) (- cent 900))
-     (.noteOn node delay)
-     (.noteOff node (+ delay duration))
+     (.start node delay)    ; noteOn = older syntax, start = newer
+     (.stop node (+ delay duration)) ; noteOff = older, stop = newer
      node)) ;; return the oscillator node at the end
 
 (defn connect-to
