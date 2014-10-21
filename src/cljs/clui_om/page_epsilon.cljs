@@ -3,6 +3,7 @@
   (:require [clojure.string :as s]
             [clui-om.misc.music-theory :as m]
             [cljs.core.async :refer [put! <! >! chan sliding-buffer timeout]]
+            [joy.music :as j]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
 
@@ -23,7 +24,24 @@
 ;; Utility & Helpers
 ;;*****************************************************************************
 
+(def make-once (memoize (fn [audio-api] (new audio-api))))
 
+(defn oscillator-node
+  "Takes a WebAudio context and a simple note map, and returns an Oscillator
+  node from the the WebAudio API. Currently uses a fixed volume and duration,
+  and no fancy synthesizer tricks whatsoever. See the joy.music namespace for 
+  a much more sophisticated musical approach."
+  [{:keys [freq]}]
+  (if-let [audio-api (or (.-AudioContext js/window)
+                         (.-webkitAudioContext js/window))]
+    (let [ctx (make-once audio-api)
+          compressor (.createDynamicsCompressor ctx)
+          node (.createOscillator ctx)]
+      (set! (-> node .-frequency .-value) freq)
+      (.connect node compressor)
+      (.connect compressor (.-destination ctx))
+      node)))
+  
 
 ;;*****************************************************************************
 ;; App State & other constants
@@ -82,10 +100,16 @@
                 (if (= p :down)
                   (do 
                     (.log js/console (str "Mouse press @ " label))
-                    (om/set-state! owner :active true))
+                    (om/set-state! owner :active true)
+                    (let [sound (oscillator-node @cursor)]
+                      (om/set-state! owner :sound sound)
+                      (.start sound)))
                   (do 
-                    (.log js/console (str  "Mouse raised @ " label))
-                    (om/set-state! owner :active false)))
+                    (.log js/console (str  "Mouse raised or exited @ " label))
+                    (om/set-state! owner :active false)
+                    (if-let [sound (om/get-state owner :sound)]
+                      (do (.stop sound) 
+                          (om/set-state! owner :sound nil)))))
                 (recur))))
         (go (loop []
               (let [m (<! motion)]
@@ -95,7 +119,8 @@
                     (om/set-state! owner :hovering true))
                   (do 
                     (.log js/console (str  "Mouse out @ " label))
-                    (om/set-state! owner :hovering false)))
+                    (om/set-state! owner :hovering false)
+                    (put! pressure :up)))
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [hovering] :as state}]
@@ -121,7 +146,13 @@
     (render [_]
       (dom/div #js {:className "mainWidget"}
                (dom/div #js {:className "mainInner"}
-                        (om/build piano-bar app))))))
+                        (om/build piano-bar app))
+               (dom/hr nil)
+               (dom/div #js {:className "joyDemo"}
+                        (dom/div nil
+                                 (dom/p nil "From: 'Joy of Clojure':")
+                                 (dom/button #js {:onClick #(j/main)}
+                                             "A Magical Theme")))))))
 
 
 ;;*****************************************************************************

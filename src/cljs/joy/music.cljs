@@ -54,7 +54,7 @@
      node)) ;; return the oscillator node at the end
 
 (defn connect-to
-  "Connects the output of node` to the input of node2, returning node2.
+  "Connects the output of node1 to the input of node2, returning node2.
   This lets nodes cooperate seamlessly!"
   [node1 node2]
   (.connect node1 node2)
@@ -118,12 +118,12 @@
 (defn magical-theme
   "A sequence of notes for a magical theme"
   []
-  (notes
-   (vector [11 2] [16 3] [19 1] [18 2] [16 4] [23 2]
-           [21 6] [18 6] [16 3] [19 1] [18 2] [14 4] [17 2] [11 10]
-           [11 2] [16 3] [19 1] [18 2] [16 4] [23 2]
-           [26 4] [25 2] [24 4] [20 2] [24 3] [23 1]
-           [22 2] [10 4] [19 2] [16 10])))
+()  (notes
+     (vector [11 2] [16 3] [19 1] [18 2] [16 4] [23 2]
+             [21 6] [18 6] [16 3] [19 1] [18 2] [14 4] [17 2] [11 10]
+             [11 2] [16 3] [19 1] [18 2] [16 4] [23 2]
+             [26 4] [25 2] [24 4] [20 2] [24 3] [23 1]
+             [22 2] [10 4] [19 2] [16 10])))
 
 
 
