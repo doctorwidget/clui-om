@@ -150,13 +150,39 @@ span.deckCensus {
     border: 2px solid #FF0000;
     height: 70%;
     width: 5.5em;
-    color: #FF0000;
     background-color: #000000;
+    z-index: 100; /** beats the default 0 **/
 }
 
 div.noteName {
+    display: none;
+}
+
+.glow div.noteName, .active div.noteName {
+    display: block;
     position: absolute;
     bottom: 0;
     width: 100%;
     text-align: center;
+    color: #FF0000;
+    font-size: 2em;
+    font-family: monospace;y
+}
+
+.pianoKey.glow {
+   border: 4px solid #00FF00 !important;
+   background-color: rgba(0, 255, 0, 0.4);
+}
+
+.pianoKey.minor.glow {
+  background-color: rgba(0, 128, 0, 1);
+}
+
+.pianoKey.active {
+   border: 4px solid #00AAFF !important;
+   background-color: rgba(0, 154, 255, 0.4);
+}
+
+.pianoKey.minor.active {
+   background-color: rgba(0, 77, 128, 1);
 }
