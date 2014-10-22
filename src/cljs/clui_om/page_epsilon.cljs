@@ -1,6 +1,7 @@
 (ns clui-om.page-epsilon
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
-  (:require [clojure.string :as s]
+  (:require [cljs-http.client :as http]
+            [clojure.string :as s]
             [clui-om.misc.music-theory :as m]
             [cljs.core.async :refer [put! <! >! chan sliding-buffer timeout]]
             [joy.music :as j]
@@ -28,26 +29,43 @@
 
 (defn oscillator-node
   "Takes a WebAudio context and a simple note map, and returns an Oscillator
-  node from the the WebAudio API. Currently uses a fixed volume and duration,
-  and no fancy synthesizer tricks whatsoever. See the joy.music namespace for 
-  a much more sophisticated musical approach."
+  node from the the WebAudio API. The returned node is already hooked up to a
+  compressor to prevent feedback, and to the AudioContext .-destination (i.e.
+  to the speakers). All that remains to do is to call (.start) on it."
   [{:keys [freq]}]
   (if-let [audio-api (or (.-AudioContext js/window)
                          (.-webkitAudioContext js/window))]
     (let [ctx (make-once audio-api)
-          compressor (.createDynamicsCompressor ctx)
+          compressor (.createDynamicsCompressor ctx) ; prevents feedback
           node (.createOscillator ctx)]
       (set! (-> node .-frequency .-value) freq)
       (.connect node compressor)
+      ;; each AudioContext instances has one & only one **destination**
+      ;; Think of it as the actual speakers. 
       (.connect compressor (.-destination ctx))
+      ;; Finally, return the node so other code can turn it on & off
       node)))
-  
+
+
+(def track-names [:affirmative :beep :intercom :swoosh :working])
+
+(defn get-tracks
+  "Get a vector of the various audio tracks as Om-friendly sub-maps"
+  [tracks]
+  (reduce (fn [v k]
+            (conj v {:title k :file (str (name k) ".mp3") :loaded false}))
+       []
+       tracks))
+
 
 ;;*****************************************************************************
 ;; App State & other constants
 ;;*****************************************************************************
 
-(def app-state (atom {:notes (m/chromatic-scale)})) 
+
+
+(def app-state (atom {:notes (m/chromatic-scale)
+                      :tracks (get-tracks track-names)})) 
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
 
@@ -116,10 +134,10 @@
               (let [m (<! motion)]
                 (if (= m :over)
                   (do 
-                    (.log js/console (str  "Mouse over @ " label))
+                    ;(.log js/console (str  "Mouse over @ " label))
                     (om/set-state! owner :hovering true))
                   (do 
-                    (.log js/console (str  "Mouse out @ " label))
+                    ;(.log js/console (str  "Mouse out @ " label))
                     (om/set-state! owner :hovering false)))
                 (recur))))))
     om/IRenderState
@@ -139,6 +157,33 @@
                         (apply dom/div #js {:className "pianoInner"}
                                (om/build-all piano-key (:notes app))))))))
 
+(defn juke-button
+  "A component that provides a button to play a single audio file"
+  [cursor owner opts]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:clicks (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [clicks (om/get-state owner :clicks)]
+        (go (loop []
+              (let [_ (<! clicks)
+                    url (str "/audio/" (:file @cursor))]
+                ;(.log js/console (str "Click on track " (:file @cursor)))
+                (.log js/console (str "Requesting track: " url))
+                (let [{:keys [status body headers]} (<! (http/get url))]
+                  (.log js/console (str "Response Status: " status))
+                  (.log js/console (str "Response Headers: " headers)))
+                  
+                
+                (recur))))))
+    om/IRenderState
+    (render-state [_ {:keys [clicks] :as state}]
+      (dom/div #js {:className "trackButton"}
+               (dom/button #js {:onClick #(put! clicks :play)}
+                           (str (:title cursor)))))))
+
 (defn main-widget
   [app owner opts]
   (reify
@@ -152,7 +197,11 @@
                         (dom/div nil
                                  (dom/p nil "From: 'Joy of Clojure':")
                                  (dom/button #js {:onClick #(j/main)}
-                                             "A Magical Theme")))))))
+                                             "A Magical Theme")))
+               (dom/hr nil)
+               (apply dom/div #js {:className "trackBar"}
+                      (dom/p nil "Individual MP3 tracks:")
+                      (om/build-all juke-button (:tracks app)))))))
 
 
 ;;*****************************************************************************

@@ -186,3 +186,7 @@ div.noteName {
 .pianoKey.minor.active {
    background-color: rgba(0, 77, 128, 1);
 }
+
+div.trackButton {
+   display: inline-block;
+}
