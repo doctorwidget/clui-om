@@ -31,9 +31,10 @@
                        :a 440 ; concert A
                        :a# 466.16
                        :b 493.88
+                       :c5 523.2 ; next C up from middle C
                        })
 
-;; The next note in the scale would be the next full C at 522.3 Hz. The careful
+;; The next note in the scale would be the next full C at 523.2 Hz. The careful
 ;; reader will observe that this is precisely double the Hz of the first C. And
 ;; that, perhaps more than anything else, is the take-away message of the
 ;; chromatic scale: every time you double or halve the frequency, you are right
@@ -58,7 +59,8 @@
                                     :g# 800
                                     :a 900
                                     :a# 1000
-                                    :b 1100}))
+                                    :b 1100
+                                    :c5 1200}))
 
 ;; But a cent is always a **relative** value, unlike a frequency! That's a
 ;; Very Important Thing To Keep In Mind. That means the above map only
@@ -106,9 +108,9 @@
     false))
 
 (def piano-offsets
-  "The black and white sequencing of piano keys appears to be completely
+ "The black and white sequencing of piano keys appears to be completely
   arbitrary. Wtf!"
-  [0 0.5 1 1.5 2 3 3.5 4 4.5 5 5.5 6])
+  [0 0.5 1 1.5 2 3 3.5 4 4.5 5 5.5 6 7])
 
 
 (defn build-notes

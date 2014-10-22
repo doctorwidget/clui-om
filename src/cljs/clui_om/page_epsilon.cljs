@@ -1,12 +1,15 @@
 (ns clui-om.page-epsilon
-  (:require-macros [cljs.core.async.macros :refer [go alt!]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])
   (:require [cljs-http.client :as http]
+            [clojure.browser.event :as gevent]
+            [clojure.browser.net :as gnet]
             [clojure.string :as s]
             [clui-om.misc.music-theory :as m]
             [cljs.core.async :refer [put! <! >! chan sliding-buffer timeout]]
             [joy.music :as j]
             [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true])
+  (:import (goog.net.XhrIo.ResponseType)))
 
 ;; This page demonstrates using the WebAudio API for three purposes:
 ;; 1) playing a preset series of notes with some synthesizer tricks. This
@@ -25,7 +28,9 @@
 ;; Utility & Helpers
 ;;*****************************************************************************
 
+
 (def make-once (memoize (fn [audio-api] (new audio-api))))
+
 
 (defn oscillator-node
   "Takes a WebAudio context and a simple note map, and returns an Oscillator
@@ -45,6 +50,73 @@
       (.connect compressor (.-destination ctx))
       ;; Finally, return the node so other code can turn it on & off
       node)))
+
+(defn get-audio-context
+  "Get the audio context if it exists, or return nil if it does not"
+  []
+  (if-let [audio-api (or (.-AudioContext js/window)
+                         (.-webkitAudioContext js/window))]
+    (make-once audio-api)))
+
+(defn decode-file
+  "Takes an audio file as returned by an HTTP request and converts it for use
+   with the WebAudio API"
+  [audio-file]
+  (if-let [ctx (get-audio-context)]
+    (let [handler (fn [buffer] ;; buffer will hold the decoded audio data
+                    ;; create an instance of AudioBufferSourceNode
+                    (let [abs-node (.createBufferSource ctx)]
+                      ;; wire up the ``buffer`` property of that node
+                      (set! (.-source abs-node) buffer) 
+                      ;; As always, end by connecting to AudioContext.destination
+                      (.connect abs-node (.-destination ctx))))]
+      (.decodeAudioData ctx audio-file handler))))
+
+(defn file->channel
+  "Takes an audio file (as returned by an HTTP request), and returns a
+  core.async channel. That channel will eventually yield an instance of
+  AudioBufferSourceNode, which can be used like any other WebAudio node."
+  [audio-file]
+  (if-let [ctx (get-audio-context)]
+    (let [buffer-chan (chan)   ;; decoding yields WebAudio BufferSources
+          node-chan (chan)]        ;; final desired output
+      (.decodeAudioData ctx audio-file #(put! buffer-chan %))   
+      (go (let [b (<! buffer-chan)
+                abs-node (.createBufferSource ctx)]
+            (set! (.-buffer abs-node) b)
+            (.connect abs-node (.-destination ctx))
+            (put! node-chan abs-node)))  
+      node-chan)))
+
+;; cljs-http is a nice package, but it's tightly focused on handling EDN and
+;; JSON responses. There doesn't seem to be any way to set a responseType of
+;; "arraybuffer", which means it's no use for loading audio files (or binary
+;; files of any kind, really!). Therefore we fall back to the core
+;; clojure.browser.net and clojure.browser.events libraries, and handle
+;; everything old school style.
+(defn handle-success
+  "Handler for successful XHR calls"
+  [ev]
+  (let [result (.-target ev)
+        status (.getStatus result)
+        headers (.getResponseHeaders result)
+        audio-file (.getResponse result)] 
+    (.log js/console "(handle-success):: status code " status)
+    (.log js/console "(handle-success):: headers " headers)
+    (go 
+     (let [audio-node (<! (file->channel audio-file))]
+       (.log js/console "(handle-success):: got an audio node!")
+       (.start audio-node)))))
+
+(defn fetch-and-play!
+  "Fetch a file and then play it"
+  [url]
+  (let [xhr (gnet/xhr-connection)]
+    (doto xhr
+      (gevent/listen :success handle-success)
+      (gevent/listen :error #(.log js/console "XHR Request Error"))
+      (.setResponseType "arraybuffer")) 
+    (gnet/transmit xhr url "GET")))
 
 
 (def track-names [:affirmative :beep :intercom :swoosh :working])
@@ -157,6 +229,8 @@
                         (apply dom/div #js {:className "pianoInner"}
                                (om/build-all piano-key (:notes app))))))))
 
+
+
 (defn juke-button
   "A component that provides a button to play a single audio file"
   [cursor owner opts]
@@ -172,11 +246,7 @@
                     url (str "/audio/" (:file @cursor))]
                 ;(.log js/console (str "Click on track " (:file @cursor)))
                 (.log js/console (str "Requesting track: " url))
-                (let [{:keys [status body headers]} (<! (http/get url))]
-                  (.log js/console (str "Response Status: " status))
-                  (.log js/console (str "Response Headers: " headers)))
-                  
-                
+                (fetch-and-play! url)
                 (recur))))))
     om/IRenderState
     (render-state [_ {:keys [clicks] :as state}]
