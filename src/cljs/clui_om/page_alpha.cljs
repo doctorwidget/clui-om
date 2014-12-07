@@ -28,7 +28,7 @@
 ;; component function (below), we don't send this function all by itself:
 ;; it's wrapped in an anonymous function that gives access to the cursor
 ;; as arg #2. Thus (color-choice) is given access to the cursor, but the
-;; Palette compnent itself remains blissfully ignorant of it! 
+;; Palette component itself remains blissfully ignorant of it! 
 (defn color-choice [palette cursor]
   (let [msg (str "User chose palette: " palette)] 
        (om/update! cursor [:palette] palette)

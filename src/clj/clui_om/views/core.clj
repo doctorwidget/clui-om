@@ -59,6 +59,7 @@
 (h/defsnippet draggable-page-body "public/html/draggable.tpl.html" [:div.main] [])
 (h/defsnippet page-delta-body "public/html/page-delta.tpl.html" [:div.spam] [])
 (h/defsnippet page-epsilon-body "public/html/page-epsilon.tpl.html" [:div.spam] [])
+(h/defsnippet page-svg-body "public/html/page-svg.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -134,4 +135,11 @@
                    :extra-css []
                    :extra-js []}))
 
+(defn page-svg []
+  (bootstrap-page {:title "Page SVG"
+                   :heading "SVG Demonstration"
+                   :content (page-svg-body)
+                   :extra-css []
+                   :extra-js []
+                   }))
 

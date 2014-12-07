@@ -18,10 +18,17 @@ Contents:
    react-om
    om-kioo
    om-bootstrap
-   page-alpha
+   colored_tiles
+   card_tricks
+   drag_drop
+   icon_palooza
+   web_audio
+   svg
+   dimensions
    testing
    trivia
    todo
+
 
 Indices and tables
 ==================
