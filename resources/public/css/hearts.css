@@ -19,3 +19,69 @@
 .blurred {
   fill: rgba(0, 0, 0, 1);
 }
+
+svg.goldsvg {
+   x: 300;
+   y: 50;
+   width: 100;
+   height: 100;
+}
+
+.golden {
+  fill: orange;
+  stroke: orangered;
+  stroke-width: 1px;
+}
+
+.bgheart-wrap {
+   width: 100%;
+   text-align: center;
+   margin: 0 auto;
+   margin: 1em;
+}
+
+.bgheart {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  border: 2px solid red;
+  background: url(/images/heart.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+
+
+svg.foobar {
+  width: 80px;
+  height: 80px;
+}
+
+svg.foobar:hover {
+  width: 111px;
+  height: 111px;
+}
+
+svg.foobar, svg.foobar * {
+  -webkit-transition: 0.8s;
+  -moz-transition: 0.8s;
+  transition: 0.8s;
+}
+
+svg.foobar path{
+ fill: pink;
+}
+
+svg.foobar:hover path {
+ fill: chartreuse;
+}
+
+svg.foobar circle {
+  fill: skyblue;
+}
+
+svg.foobar:hover circle {
+  fill: forestgreen;
+}
+

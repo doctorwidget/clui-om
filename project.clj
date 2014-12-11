@@ -11,7 +11,8 @@
                  [kioo "0.4.0"]
                  [om "0.7.3"]
                  [racehub/om-bootstrap "0.3.0"]
-                 [markdown-clj "0.9.54"]]
+                 [markdown-clj "0.9.54"]
+                 [hickory "0.5.4"]]
   
   :plugins [[lein-ring "0.8.11"]
             [lein-cljsbuild "1.0.3"]]
