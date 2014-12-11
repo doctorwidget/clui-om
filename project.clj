@@ -38,7 +38,8 @@
                             ;:preamble ["lib/react.js"]
                             :externs ["lib/react-externs.js"
                                       "lib/joy-externs.js"
-                                      "lib/snap.svg.js"]
+                                      "lib/snap.svg.js"
+                                      "lib/svg.js"]
                             }}
                 {:source-paths ["src/cljs"]
                  :id "prod"
@@ -53,7 +54,8 @@
                             ;:preamble ["lib/react.min.js"]
                             :externs ["lib/react-externs.js"
                                       "lib/joy-externs.js"
-                                      "lib/snap.svg.js"]}}
+                                      "lib/snap.svg.js"
+                                      "lib/svg.js"]}}
                 {:source-paths ["src/cljs" "test/cljs"]
                  :id "test"
                  :compiler {:output-to "resources/test/unit/clui_om_test.js"

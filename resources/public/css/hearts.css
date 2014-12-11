@@ -1,0 +1,21 @@
+.original {
+  fill: pink;
+  stroke: red;
+  stroke-width: 1px;
+}
+
+.bluish {
+  fill: skyblue;
+  stroke: navy;
+  stroke-width: 1px;
+}
+
+.greeny {
+  fill: lime;
+  stroke: darkgreen;
+  stroke-width: 1px;
+}
+
+.blurred {
+  fill: rgba(0, 0, 0, 1);
+}

@@ -20,16 +20,28 @@
            <hr>
            <svg id="snapNodeC" width="300" height="200"></svg>
            <hr>
+           <div>
+             <h3>Heart Fu</h3>
+             <p>Some demo code adapted into ClojureScript from the 
+                <a href="http://tympanus.net/codrops/2013/11/27/svg-icons-ftw/">
+                original article on tympanus.net</a>
+             </p>
+             <svg id="snapNodeHeart" width="420" height="280"></svg>
+           </div>
+           <hr>
+           <svg id="phoneNode" width="350" height="275"></svg>
            <div id="omNode">Om-based SVG node</div>
          </div> <!-- /.col -->
       </div> <!-- /.row -->
     </div> <!-- /.container -->
-    <svg>
+    <svg id="svgLibrary" height="0" width="0"
+         style="position:absolute;margin-left: -100%"> 
        <defs>
           <pattern id="patternAlpha" patternUnits="userSpaceOnUse" 
                 x="0" y="0" width="10" height="10" viewBox="0 0 10 10">
               <path d="M-5,0,10,15M0-5,15,10" stroke="white" stroke-width="5"></path>
            </pattern>
+<path id="pageHeart" d="M16,28.261c0,0-14-7.926-14-17.046c0-9.356,13.159-10.399,14-0.454c1.011-9.938,14-8.903,14,0.454 C30,20.335,16,28.261,16,28.261z"/>
         </defs>
     </svg>
     <script src="/js/react.js"></script>

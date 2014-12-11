@@ -60,6 +60,7 @@
 (h/defsnippet page-delta-body "public/html/page-delta.tpl.html" [:div.spam] [])
 (h/defsnippet page-epsilon-body "public/html/page-epsilon.tpl.html" [:div.spam] [])
 (h/defsnippet page-svg-body "public/html/page-svg.tpl.html" [:div.spam] [])
+(h/defsnippet page-svg-alt-body "public/html/page-svg-alt.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -69,7 +70,7 @@
               :heading "Welcome to Clui-Om"
               :content (home-body)}))
 
-(defn vanilla-page []
+6(defn vanilla-page []
   (base-page {:title "Vanilla ClojureScript"
               :heading "Sanity Test For Raw ClojureScript"
               :content (vanilla-body)}))
@@ -143,3 +144,9 @@
                    :extra-js []
                    }))
 
+(defn page-svg-alt []
+  (bootstrap-page {:title "SVG Redux"
+                   :heading "More SVG demonstrations"
+                   :content (page-svg-alt-body)
+                   :extra-css ["css/hearts.css"]
+                   }))

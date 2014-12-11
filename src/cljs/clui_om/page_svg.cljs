@@ -1,10 +1,10 @@
 (ns clui-om.page-svg)
 
-
 (def snap-node "#snapNode")
 (def snap-beta "#snapNodeB")
 (def snap-gamma "#snapNodeC")
-(def om-node "omNode")
+(def snap-heart "#snapNodeHeart")
+(def om-node "#omNode")
 
 (defn snap-raw
   "A function for executing some plain JS->CLJS Snap code,
@@ -70,6 +70,45 @@
                     (.drag wrapper)))]
     (.load js/Snap "images/bear18.svg" handler)))
 
+(defn snap-raw-heart-fu
+  "Various experiments with the heart icon."
+  []
+  (let [paper (js/Snap snap-heart)
+        bg (.rect paper 0 0 100 100)
+        _ (.attr bg #js {:fill "rgba(0,0,0,0)"})
+        nested (.svg paper 0 0 100 100 0 0 30 30)
+        wrapper (.group paper bg nested)
+        handler (fn [frag]
+                  (let [path (.select frag "#heart-icon")
+                        dupe (.clone path)
+                        _ (.attr dupe #js {:fill "#3366FF"})
+                        nest2 (.svg paper 150 0 100 100 0 0 30 30)
+                        _ (.append nest2 dupe)]
+                    (.append nested path)
+                    (.attr path #js {:fill "#ff3300"})))]
+    (.load js/Snap "images/heart.svg" handler)))
+
+(defn load-phone
+  "We should automate this as a macro:
+   Load first using core.async
+   Create the nested SVG only *after* the load
+   Parse the XML to find the overall document width and height
+   Create the SVG using those dimensions from the viewport
+   Append X to the nested, where X defaults to 'g' but can be overridden
+   Also allow explicit overriding of the viewport
+   End result should just be (smart-load path-to-image)
+   And the return value should be the nested SVG"
+  []
+  (let [paper (js/Snap "#phoneNode")
+        nested (.svg paper 0 0 100 100 0 0 272 272)
+        wrapper (.group paper nested)
+        handler (fn [frag]
+                  (let [g (.select frag "g")]
+                    (.append nested g)
+                    (.animate wrapper #js {:transform "T200,0"} 10000)))]
+    (.load js/Snap "images/ringing-phone.svg" handler)))
+
+
 (defn ^:export main
   "Main entry point for page svg"
   []
@@ -77,5 +116,7 @@
     (.log js/console msg)
     (snap-raw)
     (snap-raw-beta)
-    (snap-raw-gamma)))
+    (snap-raw-gamma)
+    (snap-raw-heart-fu)
+    (load-phone)))
 
