@@ -1,0 +1,63 @@
+div.mainWidgetOuter {
+  border: 1px solid salmon;
+  margin: 0.25em;
+  padding: 0.25em;
+}
+
+div.mainWidgetInner {
+  border: 1px solid pink;
+  margin: 0.25em;
+  padding: 0.25em;
+}
+
+svg.iconGears {
+  width: 200;
+  height: 200;
+}
+
+svg.iconGears rect {
+  fill: rgba(0,0,0,0);
+  -webkit-transition: all 500ms ease-in;
+  -moz-transition: all 500ms ease-in;
+  -o-transition: all 500ms ease-in;
+  transition: all 500ms ease-in;
+}
+
+svg.iconGears circle {
+  stroke: darkorange;
+  stroke-width: 0;
+  -webkit-transition: all 500ms ease-in;
+  -moz-transition: all 500ms ease-in;
+  -o-transition: all 500ms ease-in;
+  transition: all 500ms ease-in;  
+}
+
+svg.iconGears circle:first-child {
+  fill: dodgerblue;
+}
+
+svg.iconGears circle:nth-of-type(2) {
+  fill: navy;
+}
+
+svg.iconGears path {
+  fill: skyblue;
+  stroke: navy;
+  stroke-width: 0;
+  -webkit-transition: all 500ms ease-in;
+  -moz-transition: all 500ms ease-in;
+  -o-transition: all 500ms ease-in;
+  transition: all 500ms ease-in;
+}
+
+svg.iconGears:hover rect {
+  fill: rgba(255,200,0,0.3);
+}
+
+svg.iconGears:hover path {
+  stroke-width: 0.3;
+}
+
+svg.iconGears:hover circle {
+  stroke-width: 1;
+}

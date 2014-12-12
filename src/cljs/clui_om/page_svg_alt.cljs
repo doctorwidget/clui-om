@@ -12,7 +12,7 @@
 ;;; NOTE that we had to add the hickory project as a dependency in order
 ;;; to get SVG markup injected into the page. You could do that kind of thing
 ;;; with ``snap.svg``, but then you'd be managing SVG state *separately* from
-;;; Om, and that just seems like a bad idea. This way we load the SVG using the
+;;; Om, and that just seems like a bad idea. This way we load the SVG using the  
 ;;; cljs-http library, parse it and query it using Hickory and then create the
 ;;; necessary elements directly inside Om. Now your SVG state is integrated
 ;;; with the rest of the Om state, which is surely the best path. 
@@ -99,7 +99,7 @@
           #_(.log js/console (str "Received status: " status))
           #_(.log js/console (str "Received body: " body))
           #_(.log js/console (str "Parsed body as: " h-data))
-          #_(.log js/console (str "Found SVG Root: " svg-root))
+          (.log js/console (str "Found SVG Root: " svg-root))
           #_(.log js/console (str "Found SVG Width: " svg-width))
           #_(.log js/console (str "Found SVG Height: " svg-height))
           #_(.log js/console (str "InnerHTML: " innerhtml))
@@ -107,14 +107,6 @@
           #_(.log js/console (str "Final inner HTML: " finalized))
           (put! result {:width svg-width :height svg-height :inner-html finalized})))
     result))
-
-(defn inject-svg
-  "Inject SVG markup onto the page based on a remote call."
-  []
-  (go (let [svg (<! (load-svg))]
-        (.log js/console (str "Injecting:: width: " (:width svg)))
-        (.log js/console (str "Injecting:: height: " (:height svg)))
-        (.log js/console (str "Injecting:: HTML: " (:inner-html svg))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -136,7 +128,7 @@
     om/IWillMount
     (will-mount [_]
       (let [arrivals (om/get-state owner :load-chan)]
-        (go (let [svg (<! (load-svg))]
+        (go (let [svg (<! arrivals)]
               (om/set-state! owner :svg-data svg)))))
     om/IRenderState
     (render-state [_ {:keys [svg-data] :as state}]
@@ -150,8 +142,8 @@
                           (dom/p nil (str "Height: " h))
                           (dom/svg (clj->js {:className "foobar"
                                              :viewBox (str "0 0 " w " " h)
-                                             ;:width "111"
-                                             ;:height "111"
+                                             :width "111"
+                                             :height "111"
                                              :xmlns "http://www.w3.org/2000/svg"
                                              :dangerouslySetInnerHTML #js {:__html raw}
                                              :onMouseOver #(om/set-state! owner :hovering true)
@@ -167,6 +159,5 @@
     (.log js/console msg)
     (get-heart)
     (commence-cloning)
-    (inject-svg)
     (om/root main-widget app-state {:target ALPHA-ROOT})))
 

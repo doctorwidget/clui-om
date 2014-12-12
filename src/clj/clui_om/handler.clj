@@ -22,6 +22,7 @@
   (GET "/page-epsilon" [] (views/page-epsilon))
   (GET "/page-svg" [] (views/page-svg))
   (GET "/page-svg-alt" [] (views/page-svg-alt))
+  (GET "/page-svg-om" [] (views/page-svg-om))
   (route/resources "/")
   (route/not-found "Not Found"))
 

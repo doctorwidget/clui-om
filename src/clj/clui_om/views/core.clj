@@ -61,6 +61,7 @@
 (h/defsnippet page-epsilon-body "public/html/page-epsilon.tpl.html" [:div.spam] [])
 (h/defsnippet page-svg-body "public/html/page-svg.tpl.html" [:div.spam] [])
 (h/defsnippet page-svg-alt-body "public/html/page-svg-alt.tpl.html" [:div.spam] [])
+(h/defsnippet page-svg-om-body "public/html/page-svg-om.tpl.html" [:div.spam] [])
 
 ;; view functions should resolve to an entire document, not just
 ;; a fragment! Hence these views call the (base-page) function above,
@@ -150,3 +151,9 @@
                    :content (page-svg-alt-body)
                    :extra-css ["css/hearts.css"]
                    }))
+
+(defn page-svg-om []
+  (bootstrap-page {:title "SVG And Om"
+                   :heading "SVG + Om"
+                   :content (page-svg-om-body)
+                   :extra-css ["css/svg-om.css"]}))
