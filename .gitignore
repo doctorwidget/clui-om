@@ -17,3 +17,4 @@ resources/public/js/*
 !resources/public/js/sanity_react.js
 resources/test/unit/*
 src/lib/
+scratch.rst
