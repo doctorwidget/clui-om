@@ -35,11 +35,18 @@
   [msg]
   (gdom/setTextContent $output msg))
 
-(defn ^:export initialize
-  "Initialize the main vanilla page"
+(defn my-alert
+  "Synonym for js/alert"
+  [msg]
+  (js/alert msg))
+
+(def host-msg "initializing vanilla.main()...")
+
+(defn ^:export main
+  "Main function for the main vanilla page"
   []
   (repl/connect "http://localhost:9000/repl")
-  (.log js/console "initializing vanilla...")
+  (.log js/console host-msg)
   (gcls/add $output "vanilla-border")
   (gdom/setTextContent $output (str "Dynamically created by the Google Closure at: " (js/Date.)))
   (geve/listen $output getype/CLICK (fn [evt] (gcls/toggle $output "vanilla-border")))

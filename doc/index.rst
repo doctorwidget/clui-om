@@ -13,6 +13,7 @@ Contents:
    :glob:
 
    intro
+   repl
    react
    om
    react-om
