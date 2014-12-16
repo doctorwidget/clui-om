@@ -85,3 +85,9 @@ svg.foobar:hover circle {
   fill: forestgreen;
 }
 
+
+
+svg.iconHeart {
+  width: 80px;
+  height: 80px;
+}

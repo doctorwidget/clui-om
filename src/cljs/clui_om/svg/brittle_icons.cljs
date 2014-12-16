@@ -3,7 +3,8 @@
   (:require [cljs.core.async :refer [put! <! >! chan timeout]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [clui-om.svg.utils :as svg]))
+            [clui-om.svg.utils :as svg]
+            [clui-om.svg.icons :as icons :include-macros true]))
 
 ;; Om components that use SVG graphics
 ;; These examples are all very brittle!
@@ -179,3 +180,36 @@
                                (dom/path (clj->js {:d (get-in pa1 [:attrs :d])}))
                                (dom/path (clj->js {:d (get-in pa2 [:attrs :d])})))))
                   (dom/p nil "No SVG data available for medal43.svg")))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Not So Brittle Examples
+;;
+;; Here are some working examples of icons created via the use of the
+;; (defsvg) macro. This lets us completely avoid all IO issues (no need
+;; for core.async or cljs-http). We also do some of the most-repetetive
+;; cleanup inside the macro (such as removing whitespace, 'px' suffixes,
+;; doctypes, and so on), as well as calculating a viewBox if one is
+;; missing. The client-side Om code gets to work with a plain old Clojure
+;; map right from the start, which makes everything clearer and simpler.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(icons/defsvg heart-svg "public/images/heart.svg")
+
+(defn robust-heart-icon
+  [app owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [elts (:content heart-svg)
+            path1 (first (filter #(= :path (:tag %)) elts))
+            divattr {:className "iconOuter heart"}
+            svgattr {:viewBox (get-in heart-svg [:attrs :viewbox])
+                     :id "lonelyHeart"
+                     :className "iconHeart"}
+            pathattr {:d (get-in path1 [:attrs :d])
+                      :className "lonelyPath"}]
+        (dom/div (clj->js divattr)
+                 (dom/svg (clj->js svgattr)
+                          (dom/path (clj->js pathattr))))))))
+

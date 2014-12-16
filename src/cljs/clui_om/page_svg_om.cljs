@@ -3,7 +3,8 @@
   (:require [cljs.core.async :refer [put! <! >! chan sliding-buffer timeout]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [clui-om.svg.brittle-icons :as b]))
+            [clui-om.svg.brittle-icons :as b]
+            [clui-om.svg.icons :as icons :include-macros true]))
 
 (def app-state (atom {}))
 
@@ -19,12 +20,14 @@
                     (dom/p nil "Page-SVG-Om Stuff Will Go Here.")
                     (om/build b/brittle-gear-icon app)
                     (om/build b/brittle-disc-icon app)
-                    (om/build b/brittle-medal-icon app))))))
+                    (om/build b/brittle-medal-icon app)
+                    (om/build b/robust-heart-icon app))))))
 
 (defn ^:export main
   "Main entry point for page-svg-om"
   []
   (let [msg "(main):: page_svg_om (main) function..."]
     (.log js/console msg)
+    (.log js/console (str "Brittle-Icons Heart Constant: " b/heart-svg))
     (om/root main-widget app-state {:target ALPHA-ROOT})))
 
