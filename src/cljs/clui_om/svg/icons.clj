@@ -35,6 +35,8 @@
                    h/parse
                    h/as-hickory)
         root (first (s/select (s/tag :svg) parsed))
+        x (keep-nums (get-in root [:attrs :x]))
+        y (keep-nums (get-in root [:attrs :y]))
         w (keep-nums (get-in root [:attrs :width]))
         h (keep-nums (get-in root [:attrs :height]))
         vb (get-in root [:attrs :viewbox])
@@ -44,9 +46,11 @@
         elements (filterv map? (:content root))]
      (-> root
          (assoc :content elements)
+         (assoc-in [:attrs :x] x)
+         (assoc-in [:attrs :y] y)
          (assoc-in [:attrs :width] w)
          (assoc-in [:attrs :height] h)
-         (assoc-in [:attrs :viewbox] final-vb))))
+         (assoc-in [:attrs :viewBox] final-vb))))
 
 (defmacro defsvg
   "Converts an SVG file into a map and binds the result to a var. At runtime,

@@ -223,3 +223,13 @@ path.lonelyPath {
   stroke: red;
   stroke-width: 2;
 }
+
+svg#myBear {
+  width: 80;
+  height: 80;
+}
+
+svg.myAnt {
+  width: 32;
+  height: 32;
+}

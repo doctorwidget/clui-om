@@ -192,11 +192,17 @@
 ;; doctypes, and so on), as well as calculating a viewBox if one is
 ;; missing. The client-side Om code gets to work with a plain old Clojure
 ;; map right from the start, which makes everything clearer and simpler.
+;;
+;; Both examples build on our defsvg macro, which gives us access to the
+;; SVG data as a Clojure map at runtime, neatly sidestepping all IO issues.
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (icons/defsvg heart-svg "public/images/heart.svg")
 
 (defn robust-heart-icon
+  "Use the defsvg map to build a custom icon piece-by-piece"
   [app owner]
   (reify
     om/IRender
@@ -204,7 +210,7 @@
       (let [elts (:content heart-svg)
             path1 (first (filter #(= :path (:tag %)) elts))
             divattr {:className "iconOuter heart"}
-            svgattr {:viewBox (get-in heart-svg [:attrs :viewbox])
+            svgattr {:viewBox (get-in heart-svg [:attrs :viewBox])
                      :id "lonelyHeart"
                      :className "iconHeart"}
             pathattr {:d (get-in path1 [:attrs :d])
@@ -213,3 +219,15 @@
                  (dom/svg (clj->js svgattr)
                           (dom/path (clj->js pathattr))))))))
 
+
+(icons/defsvg bear-svg "public/images/bear18.svg")
+
+;; Use the auto-icon function to create an uncritical conversion of the
+;; raw SVG into Om components. Note that ``auto-bear-icon`` holds an Om
+;; function, which must be used like any other Om component function. 
+(def auto-bear-icon (icons/auto-icon bear-svg))
+
+
+(icons/defsvg ant-svg "public/images/ant1.svg")
+
+(def auto-ant-icon (icons/auto-icon ant-svg))
