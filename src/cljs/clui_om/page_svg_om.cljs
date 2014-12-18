@@ -23,14 +23,24 @@
                     (om/build b/brittle-disc-icon app)
                     (om/build b/brittle-medal-icon app)
                     (om/build b/robust-heart-icon app)
-                    (dom/div #js {:className "iconOuter"}
+                    (dom/div #js {:className "iconOuter bear"}
                              (om/build b/auto-bear-icon
                                        app
                                        {:opts {:attrs {:id "myBear"}}}))
-                    (dom/div #js {:className "iconOuter"}
+                    (dom/div #js {:className "iconOuter ant"}
                              (om/build b/auto-ant-icon
                                        app
-                                       {:opts {:attrs {:className "myAnt"}}})))))))
+                                       {:opts {:attrs {:className "myAnt"}}}))
+                    (dom/div #js {:className "iconOuter flipper"}
+                             (om/build b/seahorse
+                                       app
+                                       {:opts {:attrs {:className "flipper"}}}))
+                    (dom/div #js {:className "iconOuter kitty"}
+                             (dom/svg #js {:viewBox "0 0 120 120"}
+                                      (dom/circle #js {:cx 60 :cy 60 :r 60})
+                                      (om/build b/kitty-icon
+                                                app
+                                                {:opts {:attrs {:y -5 :id "kitty"}}}))))))))
 
 (defn ^:export main
   "Main entry point for page-svg-om"

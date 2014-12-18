@@ -229,5 +229,10 @@
 
 
 (icons/defsvg ant-svg "public/images/ant1.svg")
-
 (def auto-ant-icon (icons/auto-icon ant-svg))
+
+(icons/defsvg seahorsicon "public/images/seahorse1.svg")
+(def seahorse (icons/auto-icon seahorsicon))
+
+(icons/defsvg kitty-svg "public/images/domestic.svg")
+(def kitty-icon (icons/auto-icon kitty-svg))

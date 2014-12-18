@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [hickory.core :as h]
-            [hickory.select :as s]))
+            [hickory.select :as s]
+            [om.dom :as dom :include-macros true]))
 
 ;; Macros for use with clui-om.svg. All macro code must be written in Clojure,
 ;; not ClojureScript!
@@ -60,4 +61,7 @@
   [name path]
   (let [result# (file->map path)]
     `(def ~name ~result#)))
+
+
+
 
