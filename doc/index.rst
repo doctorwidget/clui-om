@@ -25,6 +25,7 @@ Contents:
    icon_palooza
    web_audio
    svg
+   svg_icons
    dimensions
    testing
    trivia

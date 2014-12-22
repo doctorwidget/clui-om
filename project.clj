@@ -3,14 +3,15 @@
   :url "http://example.com/FIXME"
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2322"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/clojurescript "0.0-2496"] ; nee 2322
                  [cheshire "5.3.1"]
                  [cljs-http "0.1.16"]
                  [compojure "1.1.8"]
                  [enlive "1.1.5"]
                  [kioo "0.4.0"]
                  [om "0.7.3"]
-                 [racehub/om-bootstrap "0.3.0"]
+                 [racehub/om-bootstrap "0.3.2"]
                  [markdown-clj "0.9.54"]
                  [hickory "0.5.4"]]
   
