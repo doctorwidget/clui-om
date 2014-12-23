@@ -62,5 +62,8 @@ Test Of Custom Library AltRobotMod
     Is Odd    5
     Is Even   6
 
-
+More Custom Keyword Tests
+    Go To Home Page
+    ${census}=    Matryoshka Tests
+    Log           Found ${census} <li> elements via custom keyword
 
