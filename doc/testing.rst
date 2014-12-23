@@ -376,3 +376,52 @@ or any suite, of course. The tests are simple, but they provide nice
 fully-working examples of the basic workflow for E2E testing of any web application. 
 
 
+Robot With Multiple Browsers
+.......................................
+
+Note that the ``selenium2library`` requires extra drivers out of the gate before
+it can work with Google Chrome. To run Chrome, you must download the latest
+`chromedriver executable`_ and place it somewhere on your PATH. I plopped it
+into ``~/bin/``, which is part of my defalt PATH in all of my bash shells.
+
+.. _`chromedriver executable`: http://chromedriver.storage.googleapis.com/index.html
+
+Once you've done that, assuming that you have (sensibly) organized all of your
+tests around a generic ``${BROWSER}`` variable rather than hardcoding the
+browser, you can run your *exact same tests* in Chrome like so:
+
+.. code-block:: bash
+
+    (py279) $: pybot --variable BROWSER:chrome my-test-dir
+
+
+Similarly, you can't run ``Safari`` or ``Opera`` out of the gate either, but in
+those cases the problem has to do with the PATH rather than a missing driver.
+Both of those drivers *are* included with Selenium2Library, but you must
+download the standalone Selenium server Jar and adjust
+your PATH to point to it. The whole process is `detailed here`_. For now, I'm
+going to stick with just Chrome and Firefox, but it's worth remembering that
+this is an option too. 
+
+.. _`detailed here`: https://groups.google.com/forum/#!topic/robotframework-users/2_z4jVEkppQ
+
+
+
+Unfortunately, the reports from that command simply overwrite the reports from
+the most-recent run. As a result, if you take this most-simple approach, you
+will never be able to compare results from Firefox vs results from Chrome side
+by side. To run both with one command, you would have to either:
+
+#. Write your own Python shell script that manually swaps between two
+   directories (i.e. one labelled firefox and the other chrome), and runs
+   ``pybot`` once from each directory with the corresponding browser. 
+#. Use a CI server like `Jenkins`_ to automate the whole process. There is a
+   specific `Robot plugin for Jenkins`_ to make this easier. 
+
+.. _`Jenkins`: http://jenkins-ci.org
+
+.. _`Robot plugin for Jenkins`: https://github.com/jenkinsci/robot-plugin
+
+
+
+
