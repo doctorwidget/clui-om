@@ -51,7 +51,8 @@ Templated Sanity Header Checks
     ${HOME URL}vanilla       Sanity Test For Raw ClojureScript
     ${HOME URL}react-tut     Sanity Tests for Raw React
     ${HOME URL}react-om-tut  The React Tutorial. Now With More Om.
-
+    ${HOME URL}kioo-om-tut   Enlive Style Templating For React
+    ${HOME URL}bootstrap-demo  Bootstrap UI Components In Om
 
 Test Of Custom Library MyRobotMod
     [Documentation]    Shows the My Custom Echo custom keyword in action
@@ -66,4 +67,4 @@ More Custom Keyword Tests
     Go To Home Page
     ${census}=    Matryoshka Tests
     Log           Found ${census} <li> elements via custom keyword
-
+    Should Be Equal As Integers    ${census}    14

@@ -1,7 +1,6 @@
 """Demonstration of using a Python module as a custom Robot library."""
 
 from robot.libraries.BuiltIn import BuiltIn
-from Selenium2Library.locators import ElementFinder
 
 __all__ = ['is_even', 'is_odd', 'matryoshka_tests']
 
