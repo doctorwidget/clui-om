@@ -30,7 +30,7 @@
 ;; as arg #2. Thus (color-choice) is given access to the cursor, but the
 ;; Palette component itself remains blissfully ignorant of it! 
 (defn color-choice [palette cursor]
-  (let [msg (str "User chose palette: " palette)] 
+  (let [msg (str "Using palette: " palette)] 
        (om/update! cursor [:palette] palette)
        (om/update! cursor [:most-recent-activity] msg)
        (om/update! cursor [:tiles] (get-tiles palette))))

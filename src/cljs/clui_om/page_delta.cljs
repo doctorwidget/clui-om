@@ -45,7 +45,7 @@
                       :color (first (keys colors))
                       :glyphs glyphs
                       :glyph (first (keys glyphs))
-                      :icons (vec (take 16 (repeatedly random-icon)))}))
+                      :icons (vec (take 20 (repeatedly random-icon)))}))
 
 (def ALPHA-ROOT (.getElementById js/document "alpha-div"))
 

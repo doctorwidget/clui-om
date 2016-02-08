@@ -71,7 +71,7 @@
               :heading "Welcome to Clui-Om"
               :content (home-body)}))
 
-6(defn vanilla-page []
+(defn vanilla-page []
   (base-page {:title "Vanilla ClojureScript"
               :heading "Sanity Test For Raw ClojureScript"
               :content (vanilla-body)}))
