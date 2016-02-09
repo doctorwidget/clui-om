@@ -1,0 +1,1 @@
+web: java $JVM_OPTS -cp target/clui-om.jar clojure.main -m clui-om.web

@@ -187,5 +187,10 @@ plugin, and it's much more satisfying to have it running for all the world to
 see, now isn't it?
 
 
+Logs
+=========
+
+You can review your logs at any time with ``heroku logs --tail``.
+
 
 
