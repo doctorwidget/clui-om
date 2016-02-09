@@ -30,6 +30,7 @@ Contents:
    testing
    trivia
    todo
+   heroku
 
 
 Indices and tables

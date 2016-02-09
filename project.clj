@@ -13,10 +13,17 @@
                  [om "0.7.3"]
                  [racehub/om-bootstrap "0.3.2"]
                  [markdown-clj "0.9.54"]
-                 [hickory "0.5.4"]]
+                 [hickory "0.5.4"]
+                 [ring/ring-jetty-adapter "1.4.0"]
+                 [environ "1.0.0"]]
   
   :plugins [[lein-ring "0.8.11"]
-            [lein-cljsbuild "1.0.3"]]
+            [lein-cljsbuild "1.0.3"]
+            [environ/environ.lein "0.3.1"]]
+
+  :hooks [environ.leiningen.hooks]
+
+  :uberjar-name "clui-om.jar"
 
   :source-paths ["src" "src/clj" "src/cljs"]
   :test-paths ["test" "test/clj" "test/cljs"]
@@ -26,7 +33,9 @@
          :auto-reload? true}
 
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring-mock "0.1.5"]]}}
+                                  [ring-mock "0.1.5"]]}
+             :production {:env {:production true}}}
+  
 
   :cljsbuild {:builds
                [{:source-paths ["src/cljs"]

@@ -2,6 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
+            [clojure.java.io :as io]
             [clui-om.views.core :as views]
             [clui-om.react-om-tut :as rom]))
 
@@ -24,7 +25,11 @@
   (GET "/page-svg-alt" [] (views/page-svg-alt))
   (GET "/page-svg-om" [] (views/page-svg-om))
   (route/resources "/")
-  (route/not-found "Not Found"))
+  (ANY "*" []
+       (route/not-found (slurp (io/resource "404.html")))))
+
+; replaced older, crude not-found route with the slicker one above
+;(route/not-found "Not Found")
 
 (def app
   (handler/site app-routes))
