@@ -46,7 +46,9 @@ I was running with the ``lein-ring`` plugin, but the boilerplate uses
 
        :uberjar-name "clui-om.jar"
 
+       :min-lein-version "2.0.0"
 
+       
 clui-om.web.clj
 ------------------
 

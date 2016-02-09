@@ -25,6 +25,8 @@
 
   :uberjar-name "clui-om.jar"
 
+  :min-lein-version "2.0.0"
+
   :source-paths ["src" "src/clj" "src/cljs"]
   :test-paths ["test" "test/clj" "test/cljs"]
   
