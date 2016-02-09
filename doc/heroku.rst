@@ -151,9 +151,40 @@ Running On Heroku
 =========================
 
 Finally, once everything is running to your satisfaction locally, and you have
-committed to github, you create a Heroku app and push the local repository up to
-it. (NB: before doing this I created a remote repository and uploaded everything
-there for the first time, in case anyone wanted to see the clojurescript code).
+committed to github, it's time to deploy to Heroku.
+
+Before doing this I created a remote repository and uploaded everything
+there for the first time, in case anyone wanted to see the clojurescript code.
+After creating the repository in the github web UI:
+
+.. code-block:: bash
+
+      $: git remote add origin https://github.com/doctorwidget/clui-om.git
+
+      $: git push -u origin master
+
+
+Then it's just a matter of creating the Heroku app and pushing the repository.
+NB: this assumes you have a working Heroku toolbelt installed and good to go!
+
+.. code-block:: bash
+
+     $: heroku create
+     #... output elided
+     
+     $: git push heroku master
+     #... output elided
+
+     # make sure at least one worker is running
+     heroku ps:scale web=1
+     
+     $: heroku open
+     #... output elided
+
+And that's it! Not really any harder than running locally with the ``ring``
+plugin, and it's much more satisfying to have it running for all the world to
+see, now isn't it?
+
 
 
 
