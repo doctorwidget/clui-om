@@ -171,6 +171,7 @@ NB: this assumes you have a working Heroku toolbelt installed and good to go!
 
      $: heroku create
      #... output elided
+     #... https://limitless-garden-22281.herokuapp.com/
      
      $: git push heroku master
      #... output elided
